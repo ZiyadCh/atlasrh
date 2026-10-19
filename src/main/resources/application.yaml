@@ -1,3 +1,10 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: atlasrh
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/atlasrh
+    username: kaiser
+    password: ${DB_PASSWORD:changeme}
