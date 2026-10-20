@@ -9,10 +9,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ma.atlasrh.atlasrh.employee.entity.Employee;
 
 /**
  * Contract
@@ -31,4 +33,7 @@ public class Contract {
   private LocalDate startDate;
   private LocalDate endDate;
   private BigDecimal salaireBrut;
+
+  @ManyToOne
+  private Employee employee;
 }
