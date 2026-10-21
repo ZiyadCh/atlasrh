@@ -1,5 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: "classpath:config/liquidbase/001-employees.yaml"
-  - include:
-      file: "classpath:config/liquidbase/002-departements.yaml"

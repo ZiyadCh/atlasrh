@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - include:
+      file: classpath:db/changelog/changes/001-create-users.yaml
+  - include:
+      file: classpath:db/changelog/changes/002-create-roles.yaml
+  - include:
+      file: classpath:db/changelog/changes/003-add-user-role-fk.yaml
+  - include:
+      file: classpath:db/changelog/changes/004-create-departments.yaml
+  - include:
+      file: classpath:db/changelog/changes/005-create-contract-types.yaml
+  - include:
+      file: classpath:db/changelog/changes/006-create-contracts.yaml
+  - include:
+      file: classpath:db/changelog/changes/007-create-leave-types.yaml
+  - include:
+      file: classpath:db/changelog/changes/008-create-leave-request-statuses.yaml
+  - include:
+      file: classpath:db/changelog/changes/009-create-leave-requests.yaml
