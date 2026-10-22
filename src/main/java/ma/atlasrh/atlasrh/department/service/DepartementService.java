@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import ma.atlasrh.atlasrh.department.dto.CreateDepartementDTO;
 import ma.atlasrh.atlasrh.department.entity.Departement;
+import ma.atlasrh.atlasrh.department.mapper.DepartementMapper;
 import ma.atlasrh.atlasrh.department.repository.DepartementRepository;
 import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
 
@@ -18,10 +21,13 @@ import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
 public class DepartementService {
 
   private final DepartementRepository departementRepository;
+  private final DepartementMapper dMapper;
   private final AuthorizationService authorizationService;
 
-  public Departement create(Departement departement, Long employeeId) {
+  @Transactional
+  public Departement create(CreateDepartementDTO cDepartementDTO, Long employeeId) {
     authorizationService.departementRights(employeeId);
+    Departement departement = dMapper.toEntity(cDepartementDTO);
     return departementRepository.save(departement);
   }
 
