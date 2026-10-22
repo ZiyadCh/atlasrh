@@ -14,8 +14,8 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: contract_type_id
-                  type: SMALLINT
+                  name: contract_type
+                  type: VARCHAR(20)
                   constraints:
                     nullable: false
               - column:
@@ -32,12 +32,6 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     nullable: false
-        - addForeignKeyConstraint:
-            constraintName: fk_contract_contract_type
-            baseTableName: contracts
-            baseColumnNames: contract_type_id
-            referencedTableName: contract_types
-            referencedColumnNames: id
         - addForeignKeyConstraint:
             constraintName: fk_contract_employee
             baseTableName: contracts

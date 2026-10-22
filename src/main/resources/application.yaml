@@ -8,7 +8,7 @@ spring:
     url: jdbc:postgresql://localhost:5433/atlasrh
     username: kaiser
     password: ${DB_PASSWORD:changeme}
-  liquidbase:
+  liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 server:
   port: 8081

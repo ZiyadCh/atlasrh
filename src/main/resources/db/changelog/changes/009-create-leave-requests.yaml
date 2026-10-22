@@ -43,8 +43,8 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: status_id
-                  type: SMALLINT
+                  name: status
+                  type: VARCHAR(20)
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:
@@ -58,10 +58,4 @@ databaseChangeLog:
             baseTableName: leave_requests
             baseColumnNames: leave_type_id
             referencedTableName: leave_types
-            referencedColumnNames: id
-        - addForeignKeyConstraint:
-            constraintName: fk_leave_request_status
-            baseTableName: leave_requests
-            baseColumnNames: status_id
-            referencedTableName: leave_request_statuses
             referencedColumnNames: id

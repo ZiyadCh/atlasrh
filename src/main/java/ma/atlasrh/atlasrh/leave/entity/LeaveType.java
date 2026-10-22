@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "leave_types")
 public class LeaveType {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +29,6 @@ public class LeaveType {
   private String name;
   private int daysPerYear;
 
-  @OneToMany(mappedBy = "leaveTypes")
+  @OneToMany(mappedBy = "leaveType")
   private List<LeaveRequest> leaveRequests;
 }

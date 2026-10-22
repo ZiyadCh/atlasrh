@@ -4,9 +4,7 @@ databaseChangeLog:
   - include:
       file: classpath:db/changelog/changes/002-create-roles.yaml
   - include:
-      file: classpath:db/changelog/changes/003-add-user-role-fk.yaml
-  - include:
-      file: classpath:db/changelog/changes/004-create-departments.yaml
+      file: classpath:db/changelog/changes/004-create-departements.yaml
   - include:
       file: classpath:db/changelog/changes/005-create-contract-types.yaml
   - include:

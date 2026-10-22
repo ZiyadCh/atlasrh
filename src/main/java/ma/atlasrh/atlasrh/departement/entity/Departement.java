@@ -1,4 +1,4 @@
-package ma.atlasrh.atlasrh.department.entity;
+package ma.atlasrh.atlasrh.departement.entity;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import ma.atlasrh.atlasrh.employee.entity.Employee;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "departements")
 public class Departement {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

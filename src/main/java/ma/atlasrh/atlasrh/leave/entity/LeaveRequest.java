@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ import ma.atlasrh.atlasrh.employee.entity.Employee;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "leave_requests")
 public class LeaveRequest {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,5 +42,5 @@ public class LeaveRequest {
   private Employee employee;
 
   @ManyToOne
-  private LeaveType leaveTypes;
+  private LeaveType leaveType;
 }
