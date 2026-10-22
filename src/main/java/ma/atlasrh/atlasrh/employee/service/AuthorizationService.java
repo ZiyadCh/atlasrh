@@ -18,24 +18,29 @@ public class AuthorizationService {
     this.employeeRepository = employeeRepository;
   }
 
-  public void departementRights(Employee employee) {
-    check(employee.getRole() == Role.RH, "No access to departements");
+  public void departementRights(Long id) {
+    check(getEmployee(id).getRole() == Role.RH, "No access to departements");
   }
 
-  public void contractRights(Employee employee) {
-    check(employee.getRole() == Role.RH, "No access to contracts");
+  public void contractRights(Long id) {
+    check(getEmployee(id).getRole() == Role.RH, "No access to contracts");
   }
 
-  public void employeeRights(Employee employee) {
-    check(employee.getRole() == Role.RH, "No access to employees");
+  public void employeeRights(Long id) {
+    check(getEmployee(id).getRole() == Role.RH, "No access to employees");
   }
 
-  public void leaveRequestRights(Employee employee) {
-    check(employee.getRole() == Role.MANAGER, "No access to leave requests");
+  public void leaveRequestRights(Long id) {
+    check(getEmployee(id).getRole() == Role.MANAGER, "No access to leave requests");
   }
 
-  public void employeeLeaveRights(Employee employee) {
-    check(employee.getRole() == Role.EMPLOYE, "No access to employee leaves");
+  public void employeeLeaveRights(Long id) {
+    check(getEmployee(id).getRole() == Role.EMPLOYE, "No access to employee leaves");
+  }
+
+  private Employee getEmployee(Long id) {
+    return employeeRepository.findById(id)
+        .orElseThrow(() -> new NoAccessException("Employee not found"));
   }
 
   private void check(boolean allowed, String message) {
