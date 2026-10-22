@@ -1,6 +1,6 @@
-package ma.atlasrh.atlasrh.department.repository;
+package ma.atlasrh.atlasrh.departement.repository;
 
-import ma.atlasrh.atlasrh.department.entity.Departement;
+import ma.atlasrh.atlasrh.departement.entity.Departement;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

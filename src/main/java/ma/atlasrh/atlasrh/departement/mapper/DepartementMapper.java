@@ -1,13 +1,13 @@
-package ma.atlasrh.atlasrh.department.mapper;
+package ma.atlasrh.atlasrh.departement.mapper;
 
 import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import ma.atlasrh.atlasrh.department.dto.CreateDepartementDTO;
-import ma.atlasrh.atlasrh.department.dto.GetDepartementDTO;
-import ma.atlasrh.atlasrh.department.entity.Departement;
+import ma.atlasrh.atlasrh.departement.dto.CreateDepartementDTO;
+import ma.atlasrh.atlasrh.departement.dto.GetDepartementDTO;
+import ma.atlasrh.atlasrh.departement.entity.Departement;
 
 @Mapper(componentModel = "spring")
 public interface DepartementMapper {

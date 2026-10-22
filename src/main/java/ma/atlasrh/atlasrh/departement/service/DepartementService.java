@@ -1,4 +1,4 @@
-package ma.atlasrh.atlasrh.department.service;
+package ma.atlasrh.atlasrh.departement.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import ma.atlasrh.atlasrh.department.dto.CreateDepartementDTO;
-import ma.atlasrh.atlasrh.department.entity.Departement;
-import ma.atlasrh.atlasrh.department.mapper.DepartementMapper;
-import ma.atlasrh.atlasrh.department.repository.DepartementRepository;
+import ma.atlasrh.atlasrh.departement.dto.CreateDepartementDTO;
+import ma.atlasrh.atlasrh.departement.entity.Departement;
+import ma.atlasrh.atlasrh.departement.mapper.DepartementMapper;
+import ma.atlasrh.atlasrh.departement.repository.DepartementRepository;
 import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
 
 /**

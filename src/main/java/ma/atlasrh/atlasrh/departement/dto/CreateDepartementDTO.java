@@ -1,4 +1,4 @@
-package ma.atlasrh.atlasrh.department.dto;
+package ma.atlasrh.atlasrh.departement.dto;
 
 /**
  * createDepartementDTO

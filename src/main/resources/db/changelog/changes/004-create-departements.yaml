@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: department-1
+      id: departement-1
       author: initial
       changes:
         - createTable:
-            tableName: departments
+            tableName: departements
             columns:
               - column:
                   name: id
@@ -23,18 +23,18 @@ databaseChangeLog:
                   name: description
                   type: VARCHAR(255)
   - changeSet:
-      id: department-2
+      id: departement-2
       author: initial
       changes:
         - addColumn:
             tableName: employees
             columns:
               - column:
-                  name: department_id
+                  name: departement_id
                   type: BIGINT
         - addForeignKeyConstraint:
-            constraintName: fk_employee_department
+            constraintName: fk_employee_departement
             baseTableName: employees
-            baseColumnNames: department_id
-            referencedTableName: departments
+            baseColumnNames: departement_id
+            referencedTableName: departements
             referencedColumnNames: id
