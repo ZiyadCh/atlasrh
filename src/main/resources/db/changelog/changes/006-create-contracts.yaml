@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: contract-1
+      author: initial
+      changes:
+        - createTable:
+            tableName: contracts
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: contract_type_id
+                  type: SMALLINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_date
+                  type: DATE
+              - column:
+                  name: end_date
+                  type: DATE
+              - column:
+                  name: salaire_brut
+                  type: DECIMAL(15, 2)
+              - column:
+                  name: employee_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            constraintName: fk_contract_contract_type
+            baseTableName: contracts
+            baseColumnNames: contract_type_id
+            referencedTableName: contract_types
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            constraintName: fk_contract_employee
+            baseTableName: contracts
+            baseColumnNames: employee_id
+            referencedTableName: employees
+            referencedColumnNames: id

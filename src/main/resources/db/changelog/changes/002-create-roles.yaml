@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: role-1
+      author: initial
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: SMALLINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: VARCHAR(100)
+  - changeSet:
+      id: role-2
+      author: initial
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: RH
+              - column:
+                  name: description
+                  value: Ressources Humaines
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: MANAGER
+              - column:
+                  name: description
+                  value: Manager
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: EMPLOYE
+              - column:
+                  name: description
+                  value: Employe

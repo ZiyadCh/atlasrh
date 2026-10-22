@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: contract-type-1
+      author: initial
+      changes:
+        - createTable:
+            tableName: contract_types
+            columns:
+              - column:
+                  name: id
+                  type: SMALLINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: VARCHAR(100)
+  - changeSet:
+      id: contract-type-2
+      author: initial
+      changes:
+        - insert:
+            tableName: contract_types
+            columns:
+              - column:
+                  name: name
+                  value: CDI
+              - column:
+                  name: description
+                  value: Contrat a duree indeterminee
+        - insert:
+            tableName: contract_types
+            columns:
+              - column:
+                  name: name
+                  value: CDD
+              - column:
+                  name: description
+                  value: Contrat a duree determinee
+        - insert:
+            tableName: contract_types
+            columns:
+              - column:
+                  name: name
+                  value: STAGE
+              - column:
+                  name: description
+                  value: Stage

@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: employee-1
+      author: initial
+      changes:
+        - createTable:
+            tableName: employees
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: matricule
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: first_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: poste
+                  type: VARCHAR(100)
+              - column:
+                  name: hire_date
+                  type: DATE
+              - column:
+                  name: role_id
+                  type: SMALLINT
+                  constraints:
+                    nullable: false

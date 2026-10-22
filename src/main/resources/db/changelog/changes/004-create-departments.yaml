@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: department-1
+      author: initial
+      changes:
+        - createTable:
+            tableName: departments
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+  - changeSet:
+      id: department-2
+      author: initial
+      changes:
+        - addColumn:
+            tableName: employees
+            columns:
+              - column:
+                  name: department_id
+                  type: BIGINT
+        - addForeignKeyConstraint:
+            constraintName: fk_employee_department
+            baseTableName: employees
+            baseColumnNames: department_id
+            referencedTableName: departments
+            referencedColumnNames: id

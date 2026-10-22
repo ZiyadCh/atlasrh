@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: leave-request-status-1
+      author: initial
+      changes:
+        - createTable:
+            tableName: leave_request_statuses
+            columns:
+              - column:
+                  name: id
+                  type: SMALLINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: VARCHAR(100)
+  - changeSet:
+      id: leave-request-status-2
+      author: initial
+      changes:
+        - insert:
+            tableName: leave_request_statuses
+            columns:
+              - column:
+                  name: name
+                  value: EN_ATTENTE
+              - column:
+                  name: description
+                  value: En attente
+        - insert:
+            tableName: leave_request_statuses
+            columns:
+              - column:
+                  name: name
+                  value: APPROUVEE
+              - column:
+                  name: description
+                  value: Approuvee
+        - insert:
+            tableName: leave_request_statuses
+            columns:
+              - column:
+                  name: name
+                  value: REFUSEE
+              - column:
+                  name: description
+                  value: Refusee
+        - insert:
+            tableName: leave_request_statuses
+            columns:
+              - column:
+                  name: name
+                  value: ANNULEE
+              - column:
+                  name: description
+                  value: Annulee

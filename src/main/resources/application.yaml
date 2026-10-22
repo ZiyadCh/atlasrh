@@ -5,6 +5,10 @@ spring:
     name: atlasrh
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/atlasrh
+    url: jdbc:postgresql://localhost:5433/atlasrh
     username: kaiser
     password: ${DB_PASSWORD:changeme}
+  liquidbase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+server:
+  port: 8081

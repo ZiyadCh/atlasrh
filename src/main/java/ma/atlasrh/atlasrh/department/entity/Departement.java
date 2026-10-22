@@ -29,6 +29,6 @@ public class Departement {
   @Column(unique = true)
   private String name;
   private String description;
-  @OneToMany(mappedBy = "department")
+  @OneToMany(mappedBy = "departement")
   private List<Employee> employees;
 }
