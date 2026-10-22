@@ -7,3 +7,8 @@ services:
       - "POSTGRES_USER=kaiser"
     ports:
       - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+
+volumes:
+  pgdata:
