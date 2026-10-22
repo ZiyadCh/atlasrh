@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import ma.atlasrh.atlasrh.employee.entity.Employee;
 import ma.atlasrh.atlasrh.employee.entity.Role;
+import ma.atlasrh.atlasrh.employee.exceptions.NoAccessException;
 import ma.atlasrh.atlasrh.employee.repository.EmployeeRepository;
 
 /**
@@ -17,24 +18,30 @@ public class AuthorizationService {
     this.employeeRepository = employeeRepository;
   }
 
-  public boolean departementRights(Employee employee) {
-    return employee.getRole() == Role.RH;
+  public void departementRights(Employee employee) {
+    check(employee.getRole() == Role.RH, "No access to departements");
   }
 
-  public boolean contractRights(Employee employee) {
-    return employee.getRole() == Role.RH;
+  public void contractRights(Employee employee) {
+    check(employee.getRole() == Role.RH, "No access to contracts");
   }
 
-  public boolean employeeRights(Employee employee) {
-    return employee.getRole() == Role.RH;
+  public void employeeRights(Employee employee) {
+    check(employee.getRole() == Role.RH, "No access to employees");
   }
 
-  public boolean leaveRequestRights(Employee employee) {
-    return employee.getRole() == Role.MANAGER;
+  public void leaveRequestRights(Employee employee) {
+    check(employee.getRole() == Role.MANAGER, "No access to leave requests");
   }
 
-  public boolean employeeLeaveRights(Employee employee) {
-    return employee.getRole() == Role.EMPLOYE;
+  public void employeeLeaveRights(Employee employee) {
+    check(employee.getRole() == Role.EMPLOYE, "No access to employee leaves");
+  }
+
+  private void check(boolean allowed, String message) {
+    if (!allowed) {
+      throw new NoAccessException(message);
+    }
   }
 
 }
