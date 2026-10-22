@@ -42,5 +42,5 @@ public class LeaveRequest {
   private Employee employee;
 
   @ManyToOne
-  private LeaveType leaveTypes;
+  private LeaveType leaveType;
 }

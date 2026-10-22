@@ -42,7 +42,7 @@ databaseChangeLog:
                   name: hire_date
                   type: DATE
               - column:
-                  name: role_id
-                  type: SMALLINT
+                  name: role
+                  type: VARCHAR(20)
                   constraints:
                     nullable: false

@@ -29,6 +29,6 @@ public class LeaveType {
   private String name;
   private int daysPerYear;
 
-  @OneToMany(mappedBy = "leaveTypes")
+  @OneToMany(mappedBy = "leaveType")
   private List<LeaveRequest> leaveRequests;
 }

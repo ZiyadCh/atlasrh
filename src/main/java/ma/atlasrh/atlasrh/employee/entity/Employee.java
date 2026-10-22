@@ -11,7 +11,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -36,7 +35,7 @@ public class Employee {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @Column(unique = true)
-  private String marticule;
+  private String matricule;
   private String firstName;
   private String lastName;
   @Column(unique = true)
@@ -48,7 +47,6 @@ public class Employee {
   private LocalDate hireDate;
 
   @ManyToOne
-  @JoinColumn(name = "departement_id")
   private Departement departement;
 
   @OneToMany(mappedBy = "employee")
