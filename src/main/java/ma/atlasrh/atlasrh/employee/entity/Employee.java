@@ -3,7 +3,7 @@ package ma.atlasrh.atlasrh.employee.entity;
 import java.time.LocalDate;
 import java.util.List;
 
-import io.micrometer.common.lang.internal.Contract;
+import ma.atlasrh.atlasrh.contract.entity.Contract;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
