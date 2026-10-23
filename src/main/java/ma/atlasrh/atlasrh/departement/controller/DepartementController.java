@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.atlasrh.atlasrh.departement.dto.CreateDepartementDTO;
 import ma.atlasrh.atlasrh.departement.dto.GetDepartementDTO;
@@ -30,7 +31,7 @@ public class DepartementController {
   private final DepartementService dService;
 
   @PostMapping()
-  public ResponseEntity<Void> createDepartement(@RequestBody CreateDepartementDTO cDepartementDTO,
+  public ResponseEntity<Void> createDepartement(@Valid @RequestBody CreateDepartementDTO cDepartementDTO,
       @RequestHeader("user-id") Long employeeId) {
     dService.create(cDepartementDTO, employeeId);
     return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -48,7 +49,7 @@ public class DepartementController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Departement> updateDepartement(@PathVariable Long id,
+  public ResponseEntity<Departement> updateDepartement(@Valid @PathVariable Long id,
       @RequestBody CreateDepartementDTO cDepartementDTO, @RequestHeader("user-id") Long employeeId) {
     return ResponseEntity.status(HttpStatus.OK).body(dService.update(id, cDepartementDTO, employeeId));
   }
