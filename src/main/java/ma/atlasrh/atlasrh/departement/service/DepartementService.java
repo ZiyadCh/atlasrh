@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import ma.atlasrh.atlasrh.departement.dto.CreateDepartementDTO;
+import ma.atlasrh.atlasrh.departement.dto.GetDepartementDTO;
 import ma.atlasrh.atlasrh.departement.entity.Departement;
 import ma.atlasrh.atlasrh.departement.mapper.DepartementMapper;
 import ma.atlasrh.atlasrh.departement.repository.DepartementRepository;
@@ -31,22 +32,25 @@ public class DepartementService {
     return departementRepository.save(departement);
   }
 
-  public List<Departement> findAll(Long employeeId) {
+  public List<GetDepartementDTO> findAll(Long employeeId) {
     authorizationService.departementRights(employeeId);
-    return departementRepository.findAll();
+    return dMapper.toGetDtoList(departementRepository.findAll());
   }
 
-  public Optional<Departement> findById(Long id, Long employeeId) {
+  public Optional<GetDepartementDTO> findById(Long id, Long employeeId) {
     authorizationService.departementRights(employeeId);
-    return departementRepository.findById(id);
+    return departementRepository.findById(id).map(dMapper::toGetDto);
   }
 
-  public Departement update(Long id, Departement departement, Long employeeId) {
+  @Transactional
+  public Departement update(Long id, CreateDepartementDTO cDepartementDTO, Long employeeId) {
     authorizationService.departementRights(employeeId);
+    Departement departement = dMapper.toEntity(cDepartementDTO);
     departement.setId(id);
     return departementRepository.save(departement);
   }
 
+  @Transactional
   public void delete(Long id, Long employeeId) {
     authorizationService.departementRights(employeeId);
     departementRepository.deleteById(id);
