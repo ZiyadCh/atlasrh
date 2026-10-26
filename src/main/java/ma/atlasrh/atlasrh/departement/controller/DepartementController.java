@@ -49,8 +49,8 @@ public class DepartementController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Departement> updateDepartement(@Valid @PathVariable Long id,
-      @RequestBody CreateDepartementDTO cDepartementDTO, @RequestHeader("user-id") Long employeeId) {
+  public ResponseEntity<Departement> updateDepartement(@PathVariable Long id,
+      @Valid @RequestBody CreateDepartementDTO cDepartementDTO, @RequestHeader("user-id") Long employeeId) {
     return ResponseEntity.status(HttpStatus.OK).body(dService.update(id, cDepartementDTO, employeeId));
   }
 
