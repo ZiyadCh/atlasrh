@@ -3,6 +3,9 @@ package ma.atlasrh.atlasrh.employee.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +71,12 @@ public class EmployeeService {
   public void delete(Long id, Long employeeId) {
     authorizationService.employeeRights(employeeId);
     employeeRepository.deleteById(id);
+  }
+
+  public Page<GetEmployeeDTO> listInPage(int page, int size, Long employeeId) {
+    authorizationService.employeeRights(employeeId);
+    Pageable pageable = PageRequest.of(page, size);
+    return employeeRepository.findAll(pageable).map(eMapper::toGetDto);
   }
 
   private void setDepartement(Employee employee, Long departementId) {

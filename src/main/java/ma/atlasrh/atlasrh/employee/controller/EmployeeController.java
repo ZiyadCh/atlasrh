@@ -2,6 +2,7 @@ package ma.atlasrh.atlasrh.employee.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
@@ -40,11 +41,8 @@ public class EmployeeController {
   }
 
   @GetMapping()
-  public List<GetEmployeeDTO> findAllEmployees(@RequestHeader("user-id") Long employeeId,
-      @RequestParam(required = false) String search,
-      @RequestParam(required = false) Long departementId,
-      @SortDefault(sort = "lastName") Sort sort) {
-    return eService.findAll(search, departementId, sort, employeeId);
+  public Page<GetEmployeeDTO> findAllEmployees(@RequestHeader("user-id") Long employeeId, @RequestParam() int page) {
+    return eService.listInPage(page, 5, employeeId);
   }
 
   @GetMapping("/{id}")
