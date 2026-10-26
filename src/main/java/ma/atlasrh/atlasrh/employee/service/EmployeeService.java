@@ -3,6 +3,9 @@ package ma.atlasrh.atlasrh.employee.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,18 +45,11 @@ public class EmployeeService {
     if (departementId != null) {
       employees = employeeRepository.findByDepartement_Id(departementId, sort);
     } else if (search != null && !search.isBlank()) {
-      employees = employeeRepository
-          .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrDepartement_NameContainingIgnoreCase(
-              search, search, search, sort);
+      employees = employeeRepository.searchByName(search, sort);
     } else {
       employees = employeeRepository.findAll(sort);
     }
     return eMapper.toGetDtoList(employees);
-  }
-
-  public List<GetEmployeeDTO> findTeam(Long employeeId) {
-    authorizationService.managerTeamRights(employeeId);
-    return eMapper.toGetDtoList(employeeRepository.findByManager_Id(employeeId));
   }
 
   public Optional<GetEmployeeDTO> findById(Long id, Long employeeId) {
@@ -75,6 +71,12 @@ public class EmployeeService {
   public void delete(Long id, Long employeeId) {
     authorizationService.employeeRights(employeeId);
     employeeRepository.deleteById(id);
+  }
+
+  public Page<GetEmployeeDTO> listInPage(int page, int size, Long employeeId) {
+    authorizationService.employeeRights(employeeId);
+    Pageable pageable = PageRequest.of(page, size);
+    return employeeRepository.findAll(pageable).map(eMapper::toGetDto);
   }
 
   private void setDepartement(Employee employee, Long departementId) {
