@@ -3,6 +3,7 @@ package ma.atlasrh.atlasrh.employee.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,12 +32,28 @@ public class EmployeeService {
     authorizationService.employeeRights(employeeId);
     Employee employee = eMapper.toEntity(cEmployeeDTO);
     setDepartement(employee, cEmployeeDTO.departementId());
+    setManager(employee, cEmployeeDTO.managerId());
     return employeeRepository.save(employee);
   }
 
-  public List<GetEmployeeDTO> findAll(Long employeeId) {
+  public List<GetEmployeeDTO> findAll(String search, Long departementId, Sort sort, Long employeeId) {
     authorizationService.employeeRights(employeeId);
-    return eMapper.toGetDtoList(employeeRepository.findAll());
+    List<Employee> employees;
+    if (departementId != null) {
+      employees = employeeRepository.findByDepartement_Id(departementId, sort);
+    } else if (search != null && !search.isBlank()) {
+      employees = employeeRepository
+          .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrDepartement_NameContainingIgnoreCase(
+              search, search, search, sort);
+    } else {
+      employees = employeeRepository.findAll(sort);
+    }
+    return eMapper.toGetDtoList(employees);
+  }
+
+  public List<GetEmployeeDTO> findTeam(Long employeeId) {
+    authorizationService.managerTeamRights(employeeId);
+    return eMapper.toGetDtoList(employeeRepository.findByManager_Id(employeeId));
   }
 
   public Optional<GetEmployeeDTO> findById(Long id, Long employeeId) {
@@ -50,6 +67,7 @@ public class EmployeeService {
     Employee employee = eMapper.toEntity(cEmployeeDTO);
     employee.setId(id);
     setDepartement(employee, cEmployeeDTO.departementId());
+    setManager(employee, cEmployeeDTO.managerId());
     return eMapper.toGetDto(employeeRepository.save(employee));
   }
 
@@ -62,6 +80,12 @@ public class EmployeeService {
   private void setDepartement(Employee employee, Long departementId) {
     if (departementId != null) {
       employee.setDepartement(departementRepository.findById(departementId).orElse(null));
+    }
+  }
+
+  private void setManager(Employee employee, Long managerId) {
+    if (managerId != null) {
+      employee.setManager(employeeRepository.findById(managerId).orElse(null));
     }
   }
 }

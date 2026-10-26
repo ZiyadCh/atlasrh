@@ -30,6 +30,10 @@ public class AuthorizationService {
     check(getEmployee(id).getRole() == Role.RH, "No access to employees");
   }
 
+  public void managerTeamRights(Long id) {
+    check(getEmployee(id).getRole() == Role.MANAGER, "No access to manager team");
+  }
+
   public void leaveRequestRights(Long id) {
     check(getEmployee(id).getRole() == Role.MANAGER, "No access to leave requests");
   }

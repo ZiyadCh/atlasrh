@@ -14,8 +14,10 @@ public interface ContractMapper {
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "employee", ignore = true)
+  @Mapping(target = "status", ignore = true)
   Contract toEntity(CreateContractDTO dto);
 
+  @Mapping(target = "employeeId", source = "employee.id")
   @Mapping(target = "employee", expression = "java(contract.getEmployee() == null ? null : contract.getEmployee().getFirstName() + \" \" + contract.getEmployee().getLastName())")
   GetContractDTO toGetDto(Contract contract);
 

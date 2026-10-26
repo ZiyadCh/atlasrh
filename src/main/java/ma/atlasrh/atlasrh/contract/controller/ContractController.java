@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -51,6 +52,20 @@ public class ContractController {
   public ResponseEntity<GetContractDTO> updateContract(@PathVariable Long id,
       @Valid @RequestBody CreateContractDTO cContractDTO, @RequestHeader("user-id") Long employeeId) {
     return ResponseEntity.status(HttpStatus.OK).body(cService.update(id, cContractDTO, employeeId));
+  }
+
+  @GetMapping("/employee/{employeeId}")
+  public List<GetContractDTO> findContractsByEmployee(@PathVariable Long employeeId,
+      @RequestHeader("user-id") Long userId) {
+    return cService.findHistoryByEmployee(employeeId, userId);
+  }
+
+  @PatchMapping("/{id}/terminate")
+  public ResponseEntity<GetContractDTO> terminateContract(@PathVariable Long id,
+      @RequestHeader("user-id") Long employeeId) {
+    return cService.terminate(id, employeeId)
+        .map(dto -> ResponseEntity.ok(dto))
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @DeleteMapping("/{id}")

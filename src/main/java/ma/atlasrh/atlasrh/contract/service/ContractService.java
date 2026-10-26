@@ -1,5 +1,6 @@
 package ma.atlasrh.atlasrh.contract.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import ma.atlasrh.atlasrh.contract.dto.CreateContractDTO;
 import ma.atlasrh.atlasrh.contract.dto.GetContractDTO;
 import ma.atlasrh.atlasrh.contract.entity.Contract;
+import ma.atlasrh.atlasrh.contract.entity.ContractStatus;
 import ma.atlasrh.atlasrh.contract.mapper.ContractMapper;
 import ma.atlasrh.atlasrh.contract.repository.ContractRepository;
 import ma.atlasrh.atlasrh.employee.repository.EmployeeRepository;
@@ -50,8 +52,24 @@ public class ContractService {
     authorizationService.contractRights(employeeId);
     Contract contract = cMapper.toEntity(cContractDTO);
     contract.setId(id);
+    contractRepository.findById(id).ifPresent(existing -> contract.setStatus(existing.getStatus()));
     setEmployee(contract, cContractDTO.employeeId());
     return cMapper.toGetDto(contractRepository.save(contract));
+  }
+
+  public List<GetContractDTO> findHistoryByEmployee(Long employeeId, Long requesterId) {
+    authorizationService.contractRights(requesterId);
+    return cMapper.toGetDtoList(contractRepository.findByEmployee_IdOrderByStartDateDesc(employeeId));
+  }
+
+  @Transactional
+  public Optional<GetContractDTO> terminate(Long id, Long employeeId) {
+    authorizationService.contractRights(employeeId);
+    return contractRepository.findById(id).map(contract -> {
+      contract.setEndDate(LocalDate.now());
+      contract.setStatus(ContractStatus.TERMINATED);
+      return cMapper.toGetDto(contractRepository.save(contract));
+    });
   }
 
   @Transactional

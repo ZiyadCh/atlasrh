@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: contract-status-1
+      author: initial
+      changes:
+        - addColumn:
+            tableName: contracts
+            columns:
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: ACTIVE
+                  constraints:
+                    nullable: false

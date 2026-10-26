@@ -15,3 +15,7 @@ databaseChangeLog:
       file: classpath:db/changelog/changes/008-create-leave-request-statuses.yaml
   - include:
       file: classpath:db/changelog/changes/009-create-leave-requests.yaml
+  - include:
+      file: classpath:db/changelog/changes/010-add-employee-manager.yaml
+  - include:
+      file: classpath:db/changelog/changes/011-add-contract-status.yaml

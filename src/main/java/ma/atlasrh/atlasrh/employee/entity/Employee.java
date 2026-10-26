@@ -49,6 +49,9 @@ public class Employee {
   @ManyToOne
   private Departement departement;
 
+  @ManyToOne
+  private Employee manager;
+
   @OneToMany(mappedBy = "employee")
   private List<Contract> contracts;
 

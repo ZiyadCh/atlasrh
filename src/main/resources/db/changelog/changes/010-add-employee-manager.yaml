@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: employee-manager-1
+      author: initial
+      changes:
+        - addColumn:
+            tableName: employees
+            columns:
+              - column:
+                  name: manager_id
+                  type: BIGINT
+        - addForeignKeyConstraint:
+            constraintName: fk_employee_manager
+            baseTableName: employees
+            baseColumnNames: manager_id
+            referencedTableName: employees
+            referencedColumnNames: id
