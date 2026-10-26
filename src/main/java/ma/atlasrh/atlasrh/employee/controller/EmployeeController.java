@@ -47,11 +47,6 @@ public class EmployeeController {
     return eService.findAll(search, departementId, sort, employeeId);
   }
 
-  @GetMapping("/team")
-  public List<GetEmployeeDTO> findTeam(@RequestHeader("user-id") Long employeeId) {
-    return eService.findTeam(employeeId);
-  }
-
   @GetMapping("/{id}")
   public GetEmployeeDTO findEmployeeById(@PathVariable Long id,
       @RequestHeader("user-id") Long employeeId) {

@@ -42,18 +42,11 @@ public class EmployeeService {
     if (departementId != null) {
       employees = employeeRepository.findByDepartement_Id(departementId, sort);
     } else if (search != null && !search.isBlank()) {
-      employees = employeeRepository
-          .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrDepartement_NameContainingIgnoreCase(
-              search, search, search, sort);
+      employees = employeeRepository.searchByName(search, sort);
     } else {
       employees = employeeRepository.findAll(sort);
     }
     return eMapper.toGetDtoList(employees);
-  }
-
-  public List<GetEmployeeDTO> findTeam(Long employeeId) {
-    authorizationService.managerTeamRights(employeeId);
-    return eMapper.toGetDtoList(employeeRepository.findByManager_Id(employeeId));
   }
 
   public Optional<GetEmployeeDTO> findById(Long id, Long employeeId) {
