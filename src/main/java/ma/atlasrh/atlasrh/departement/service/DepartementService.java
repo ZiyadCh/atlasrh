@@ -10,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 import ma.atlasrh.atlasrh.departement.dto.CreateDepartementDTO;
 import ma.atlasrh.atlasrh.departement.dto.GetDepartementDTO;
 import ma.atlasrh.atlasrh.departement.entity.Departement;
+import ma.atlasrh.atlasrh.departement.exceptions.DepartementHasEmployeesException;
 import ma.atlasrh.atlasrh.departement.mapper.DepartementMapper;
 import ma.atlasrh.atlasrh.departement.repository.DepartementRepository;
+import ma.atlasrh.atlasrh.employee.repository.EmployeeRepository;
 import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
 
 /**
@@ -24,6 +26,7 @@ public class DepartementService {
   private final DepartementRepository departementRepository;
   private final DepartementMapper dMapper;
   private final AuthorizationService authorizationService;
+  private final EmployeeRepository employeeRepository;
 
   @Transactional
   public Departement create(CreateDepartementDTO cDepartementDTO, Long employeeId) {
@@ -53,6 +56,9 @@ public class DepartementService {
   @Transactional
   public void delete(Long id, Long employeeId) {
     authorizationService.departementRights(employeeId);
+    if (employeeRepository.existsByDepartement_Id(id)) {
+      throw new DepartementHasEmployeesException(id);
+    }
     departementRepository.deleteById(id);
   }
 }
