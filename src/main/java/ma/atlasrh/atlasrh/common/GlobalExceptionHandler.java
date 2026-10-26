@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import ma.atlasrh.atlasrh.departement.exceptions.DepartementHasEmployeesException;
 import ma.atlasrh.atlasrh.employee.exceptions.NoAccessException;
 
 /**
@@ -14,6 +15,11 @@ import ma.atlasrh.atlasrh.employee.exceptions.NoAccessException;
 public class GlobalExceptionHandler {
   @ExceptionHandler(NoAccessException.class)
   public ResponseEntity<String> noAccessHandler(NoAccessException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(DepartementHasEmployeesException.class)
+  public ResponseEntity<String> departementHasEmployeeHandler(DepartementHasEmployeesException ex) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
   }
 
