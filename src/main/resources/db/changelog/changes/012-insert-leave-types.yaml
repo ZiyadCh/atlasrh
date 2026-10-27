@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: leave-type-2
+      author: initial
+      changes:
+        - insert:
+            tableName: leave_types
+            columns:
+              - column:
+                  name: name
+                  value: annuel
+              - column:
+                  name: days_per_year
+                  valueNumeric: 0
+        - insert:
+            tableName: leave_types
+            columns:
+              - column:
+                  name: name
+                  value: exceptionnel
+              - column:
+                  name: days_per_year
+                  valueNumeric: 0
