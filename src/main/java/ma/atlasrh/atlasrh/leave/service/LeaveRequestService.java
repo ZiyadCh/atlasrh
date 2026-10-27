@@ -1,16 +1,19 @@
 package ma.atlasrh.atlasrh.leave.service;
 
+import java.time.DayOfWeek;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import ma.atlasrh.atlasrh.employee.repository.EmployeeRepository;
+import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
 import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequest;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequestStatus;
 import ma.atlasrh.atlasrh.leave.mapper.LeaveRequestMapper;
 import ma.atlasrh.atlasrh.leave.repository.LeaveRequestRepository;
 import ma.atlasrh.atlasrh.leave.repository.LeaveTypeRepository;
-import ma.atlasrh.atlasrh.employee.repository.EmployeeRepository;
-import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,12 +28,19 @@ public class LeaveRequestService {
   @Transactional
   public LeaveRequest create(CreateLeaveRequest dto, Long employeeId) {
     authorizationService.employeeLeaveRights(employeeId);
-    LeaveRequest entity = leaveRequestMapper.toEntity(dto);
-    entity.setEmployee(employeeRepository.findById(employeeId)
+    LeaveRequest lRequest = leaveRequestMapper.toEntity(dto);
+    int days = (int) lRequest.getStartDate().datesUntil(lRequest.getEndDate().plusDays(1))
+        .filter(d -> d.getDayOfWeek() != DayOfWeek.SATURDAY)
+        .filter(d -> d.getDayOfWeek() != DayOfWeek.SUNDAY)
+        .count();
+    lRequest.setJourTravail(days);
+    ////
+    lRequest.setEmployee(employeeRepository.findById(employeeId)
         .orElseThrow(() -> new IllegalStateException("Employee not found: " + employeeId)));
-    entity.setLeaveType(leaveTypeRepository.findById(dto.leaveTypeId())
+    lRequest.setLeaveType(leaveTypeRepository.findById(dto.leaveTypeId())
         .orElseThrow(() -> new IllegalArgumentException("Leave type not found: " + dto.leaveTypeId())));
-    entity.setStatus(LeaveRequestStatus.EN_ATTENTE);
-    return leaveRequestRepository.save(entity);
+    lRequest.setStatus(LeaveRequestStatus.EN_ATTENTE);
+    ///
+    return leaveRequestRepository.save(lRequest);
   }
 }
