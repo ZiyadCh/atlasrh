@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: leave-type-3
+      author: initial
+      changes:
+        - update:
+            tableName: leave_types
+            columns:
+              - column:
+                  name: name
+                  value: Annuel
+              - column:
+                  name: days_per_year
+                  valueNumeric: 25
+            where: name = 'annuel'
+        - update:
+            tableName: leave_types
+            columns:
+              - column:
+                  name: name
+                  value: Exceptionnel
+              - column:
+                  name: days_per_year
+                  valueNumeric: 5
+            where: name = 'exceptionnel'

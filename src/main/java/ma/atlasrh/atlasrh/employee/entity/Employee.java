@@ -49,7 +49,7 @@ public class Employee {
   @ManyToOne
   private Departement departement;
 
-  @ManyToOne
+  @ManyToOne(optional = true)
   private Employee manager;
 
   @OneToMany(mappedBy = "employee")
