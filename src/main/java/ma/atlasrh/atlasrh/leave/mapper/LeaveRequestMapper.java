@@ -1,6 +1,9 @@
 package ma.atlasrh.atlasrh.leave.mapper;
 
+import java.time.LocalDate;
+
 import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
+import ma.atlasrh.atlasrh.leave.dto.GetLeaveRequestDTO;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,4 +18,10 @@ public interface LeaveRequestMapper {
   @Mapping(target = "status", ignore = true)
   @Mapping(target = "jourTravail", ignore = true)
   LeaveRequest toEntity(CreateLeaveRequest dto);
+
+  @Mapping(target = "employeeMatricule", source = "employee.matricule")
+  @Mapping(target = "employeeFirstName", source = "employee.firstName")
+  @Mapping(target = "employeeLastName", source = "employee.lastName")
+  @Mapping(target = "leaveTypeName", source = "leaveType.name")
+  GetLeaveRequestDTO toDto(LeaveRequest leaveRequest);
 }
