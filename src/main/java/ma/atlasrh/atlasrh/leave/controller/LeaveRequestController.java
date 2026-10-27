@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
 import ma.atlasrh.atlasrh.leave.service.LeaveRequestService;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,8 @@ public class LeaveRequestController {
 
   private final LeaveRequestService leaveRequestService;
 
-  
-
   @PostMapping()
-  public ResponseEntity<Void> createLeaveRequest(@RequestBody CreateLeaveRequest dto,
+  public ResponseEntity<Void> createLeaveRequest(@Valid @RequestBody CreateLeaveRequest dto,
       @RequestHeader("user-id") Long employeeId) {
     leaveRequestService.create(dto, employeeId);
     return ResponseEntity.status(HttpStatus.CREATED).build();

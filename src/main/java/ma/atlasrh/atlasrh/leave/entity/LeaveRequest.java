@@ -34,7 +34,7 @@ public class LeaveRequest {
   private int jourTravail;
   private String reason;
   @Enumerated(EnumType.STRING)
-  private LeaveRequestStatus status;
+  private LeaveRequestStatus status = LeaveRequestStatus.EN_ATTENTE;
   private String managerComment;
 
   @ManyToOne
