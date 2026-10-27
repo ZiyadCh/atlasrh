@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import ma.atlasrh.atlasrh.employee.repository.EmployeeRepository;
 import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
+import ma.atlasrh.atlasrh.leave.dto.ChangeLeaveStatus;
 import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequest;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequestStatus;
@@ -41,6 +42,15 @@ public class LeaveRequestService {
         .orElseThrow(() -> new IllegalArgumentException("Leave type not found: " + dto.leaveTypeId())));
     lRequest.setStatus(LeaveRequestStatus.EN_ATTENTE);
     ///
+    return leaveRequestRepository.save(lRequest);
+  }
+
+  @Transactional
+  public LeaveRequest changeStatus(ChangeLeaveStatus dto, Long employeeId) {
+    authorizationService.leaveRequestRights(employeeId);
+    LeaveRequest lRequest = leaveRequestRepository.findById(dto.leaveId())
+        .orElseThrow(() -> new IllegalArgumentException("Leave request not found: " + dto.leaveId()));
+    lRequest.setStatus(dto.status());
     return leaveRequestRepository.save(lRequest);
   }
 }

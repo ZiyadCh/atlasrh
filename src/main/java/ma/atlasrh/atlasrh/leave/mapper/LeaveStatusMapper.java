@@ -2,7 +2,6 @@ package ma.atlasrh.atlasrh.leave.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 import ma.atlasrh.atlasrh.leave.dto.ChangeLeaveStatus;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequest;
