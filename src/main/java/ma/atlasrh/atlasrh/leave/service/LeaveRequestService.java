@@ -1,6 +1,7 @@
 package ma.atlasrh.atlasrh.leave.service;
 
 import java.time.DayOfWeek;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import ma.atlasrh.atlasrh.employee.repository.EmployeeRepository;
 import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
 import ma.atlasrh.atlasrh.leave.dto.ChangeLeaveStatus;
 import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
+import ma.atlasrh.atlasrh.leave.dto.GetLeaveRequestDTO;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequest;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequestStatus;
 import ma.atlasrh.atlasrh.leave.mapper.LeaveRequestMapper;
@@ -52,5 +54,21 @@ public class LeaveRequestService {
         .orElseThrow(() -> new IllegalArgumentException("Leave request not found: " + dto.leaveId()));
     lRequest.setStatus(dto.status());
     return leaveRequestRepository.save(lRequest);
+  }
+
+  @Transactional(readOnly = true)
+  public List<GetLeaveRequestDTO> findAll(Long employeeId) {
+    authorizationService.leaveRequestRights(employeeId);
+    return leaveRequestRepository.findAll().stream()
+        .map(leaveRequestMapper::toDto)
+        .toList();
+  }
+
+  @Transactional(readOnly = true)
+  public GetLeaveRequestDTO findById(Long id, Long employeeId) {
+    authorizationService.leaveRequestRights(employeeId);
+    return leaveRequestRepository.findById(id)
+        .map(leaveRequestMapper::toDto)
+        .orElseThrow(() -> new IllegalArgumentException("Leave request not found: " + id));
   }
 }
