@@ -73,9 +73,12 @@ public class EmployeeService {
     employeeRepository.deleteById(id);
   }
 
-  public Page<GetEmployeeDTO> listInPage(int page, int size, Long employeeId) {
+  public Page<GetEmployeeDTO> listInPage(int page, int size, Long employeeId, String firstName) {
     authorizationService.employeeRights(employeeId);
     Pageable pageable = PageRequest.of(page, size);
+    if (firstName != null && !firstName.isBlank()) {
+      return employeeRepository.findByFirstNameContainingIgnoreCase(firstName, pageable).map(eMapper::toGetDto);
+    }
     return employeeRepository.findAll(pageable).map(eMapper::toGetDto);
   }
 

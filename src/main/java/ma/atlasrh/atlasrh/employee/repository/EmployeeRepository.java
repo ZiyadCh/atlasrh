@@ -2,10 +2,10 @@ package ma.atlasrh.atlasrh.employee.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import ma.atlasrh.atlasrh.employee.entity.Employee;
 
@@ -17,9 +17,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
   List<Employee> findByDepartement_Id(Long departementId, Sort sort);
 
-  @Query("SELECT e FROM Employee e WHERE LOWER(e.firstName) LIKE LOWER(CONCAT('%', :search, '%')) "
-      + "OR LOWER(e.lastName) LIKE LOWER(CONCAT('%', :search, '%'))")
-  List<Employee> searchByName(@Param("search") String search, Sort sort);
+  Page<Employee> findByFirstNameContainingIgnoreCase(String firstName, Pageable pageable);
 }
-
-

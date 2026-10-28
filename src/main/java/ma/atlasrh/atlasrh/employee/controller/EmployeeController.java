@@ -41,8 +41,10 @@ public class EmployeeController {
   }
 
   @GetMapping()
-  public Page<GetEmployeeDTO> findAllEmployees(@RequestHeader("user-id") Long employeeId, @RequestParam() int page) {
-    return eService.listInPage(page, 5, employeeId);
+  public Page<GetEmployeeDTO> findAllEmployees(@RequestHeader("user-id") Long employeeId,
+      @RequestParam() int page,
+      @RequestParam(required = false) String firstName) {
+    return eService.listInPage(page, 5, employeeId, firstName);
   }
 
   @GetMapping("/{id}")
