@@ -3,8 +3,9 @@ package ma.atlasrh.atlasrh.employee.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,8 +42,21 @@ public class EmployeeController {
   }
 
   @GetMapping()
-  public Page<GetEmployeeDTO> findAllEmployees(@RequestHeader("user-id") Long employeeId, @RequestParam() int page) {
-    return eService.listInPage(page, 5, employeeId);
+  public Page<GetEmployeeDTO> findAllEmployees(@RequestHeader("user-id") Long employeeId,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(required = false) String firstName,
+      @RequestParam(required = false) String sort,
+      @RequestParam(required = false) Long departementId) {
+    Pageable pageable = PageRequest.of(page, size,
+        sort != null && !sort.isBlank() ? Sort.by(sort) : Sort.unsorted());
+    return eService.findAll(firstName, departementId, pageable, employeeId);
+  }
+
+  @GetMapping("/manager/{managerId}/team")
+  public List<GetEmployeeDTO> getTeam(@PathVariable Long managerId,
+      @RequestHeader("user-id") Long employeeId) {
+    return eService.getTeam(managerId, employeeId);
   }
 
   @GetMapping("/{id}")

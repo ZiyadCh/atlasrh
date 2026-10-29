@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import ma.atlasrh.atlasrh.leave.dto.ChangeLeaveStatus;
 import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
 import ma.atlasrh.atlasrh.leave.dto.GetLeaveRequestDTO;
+import ma.atlasrh.atlasrh.leave.entity.LeaveRequestStatus;
 import ma.atlasrh.atlasrh.leave.service.LeaveRequestService;
 
 /**
@@ -54,5 +57,23 @@ public class LeaveRequestController {
       @RequestHeader("user-id") Long employeeId) {
     leaveRequestService.changeStatus(dto, employeeId);
     return ResponseEntity.status(HttpStatus.OK).build();
+  }
+
+  @GetMapping("/team/pending")
+  public List<GetLeaveRequestDTO> findTeamPending(@RequestHeader("user-id") Long employeeId) {
+    return leaveRequestService.findTeamPending(employeeId);
+  }
+
+  @GetMapping("/my")
+  public List<GetLeaveRequestDTO> findMyRequests(@RequestHeader("user-id") Long employeeId,
+      @RequestParam(required = false) LeaveRequestStatus status) {
+    return leaveRequestService.findMyRequests(employeeId, status);
+  }
+
+  @DeleteMapping("/{id}/cancel")
+  public ResponseEntity<Void> cancelLeaveRequest(@PathVariable Long id,
+      @RequestHeader("user-id") Long employeeId) {
+    leaveRequestService.cancel(id, employeeId);
+    return ResponseEntity.noContent().build();
   }
 }

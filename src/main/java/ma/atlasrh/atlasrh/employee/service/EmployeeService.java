@@ -45,11 +45,32 @@ public class EmployeeService {
     if (departementId != null) {
       employees = employeeRepository.findByDepartement_Id(departementId, sort);
     } else if (search != null && !search.isBlank()) {
-      employees = employeeRepository.searchByName(search, sort);
+      employees = employeeRepository.findByFirstNameContainingIgnoreCase(search,
+          PageRequest.of(0, Integer.MAX_VALUE, sort)).getContent();
     } else {
       employees = employeeRepository.findAll(sort);
     }
     return eMapper.toGetDtoList(employees);
+  }
+
+  public Page<GetEmployeeDTO> findAll(String search, Long departementId, Pageable pageable,
+      Long employeeId) {
+    authorizationService.employeeRights(employeeId);
+    Page<Employee> employees;
+    if (departementId != null) {
+      employees = employeeRepository.findByDepartement_Id(departementId, pageable);
+    } else if (search != null && !search.isBlank()) {
+      employees = employeeRepository.findByFirstNameContainingIgnoreCase(search, pageable);
+    } else {
+      employees = employeeRepository.findAll(pageable);
+    }
+    return employees.map(eMapper::toGetDto);
+  }
+
+  public List<GetEmployeeDTO> getTeam(Long managerId, Long employeeId) {
+    authorizationService.employeeRights(employeeId);
+    List<Employee> team = employeeRepository.findByManager_Id(managerId, Sort.unsorted());
+    return eMapper.toGetDtoList(team);
   }
 
   public Optional<GetEmployeeDTO> findById(Long id, Long employeeId) {
@@ -73,9 +94,12 @@ public class EmployeeService {
     employeeRepository.deleteById(id);
   }
 
-  public Page<GetEmployeeDTO> listInPage(int page, int size, Long employeeId) {
+  public Page<GetEmployeeDTO> listInPage(int page, int size, Long employeeId, String firstName) {
     authorizationService.employeeRights(employeeId);
     Pageable pageable = PageRequest.of(page, size);
+    if (firstName != null && !firstName.isBlank()) {
+      return employeeRepository.findByFirstNameContainingIgnoreCase(firstName, pageable).map(eMapper::toGetDto);
+    }
     return employeeRepository.findAll(pageable).map(eMapper::toGetDto);
   }
 
