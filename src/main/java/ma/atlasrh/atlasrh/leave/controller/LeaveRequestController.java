@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import ma.atlasrh.atlasrh.leave.dto.CancelLeaveRequestDTO;
 import ma.atlasrh.atlasrh.leave.dto.ChangeLeaveStatus;
 import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
 import ma.atlasrh.atlasrh.leave.dto.GetLeaveRequestDTO;
@@ -56,6 +57,13 @@ public class LeaveRequestController {
   public ResponseEntity<Void> changeLeaveStatus(@Valid @RequestBody ChangeLeaveStatus dto,
       @RequestHeader("user-id") Long employeeId) {
     leaveRequestService.changeStatus(dto, employeeId);
+    return ResponseEntity.status(HttpStatus.OK).build();
+  }
+
+  @PatchMapping("/cancel")
+  public ResponseEntity<Void> cancelLeaveRequest(@Valid @RequestBody CancelLeaveRequestDTO dto,
+      @RequestHeader("user-id") Long employeeId) {
+    leaveRequestService.cancelRequest(dto, employeeId);
     return ResponseEntity.status(HttpStatus.OK).build();
   }
 

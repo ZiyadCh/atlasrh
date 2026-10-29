@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import ma.atlasrh.atlasrh.employee.exceptions.NoAccessException;
 import ma.atlasrh.atlasrh.employee.repository.EmployeeRepository;
 import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
+import ma.atlasrh.atlasrh.leave.dto.CancelLeaveRequestDTO;
 import ma.atlasrh.atlasrh.leave.dto.ChangeLeaveStatus;
 import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
 import ma.atlasrh.atlasrh.leave.dto.GetLeaveRequestDTO;
@@ -53,19 +54,38 @@ public class LeaveRequestService {
     authorizationService.leaveRequestRights(employeeId);
     LeaveRequest lRequest = leaveRequestRepository.findById(dto.leaveId())
         .orElseThrow(() -> new IllegalArgumentException("Leave request not found: " + dto.leaveId()));
+
     if (lRequest.getStatus() != LeaveRequestStatus.EN_ATTENTE) {
       throw new IllegalArgumentException("Only a pending leave request can be approved or refused");
     }
-    if (lRequest.getEmployee().getManager() == null
-        || !lRequest.getEmployee().getManager().getId().equals(employeeId)) {
-      throw new NoAccessException("You can only decide on leave requests of your own team");
+
+    if (lRequest.getStatus() == LeaveRequestStatus.ANNULEE) {
+      throw new IllegalArgumentException("Only the employee himself can cancel his request");
     }
-    if (dto.status() == LeaveRequestStatus.REFUSEE
-        && (dto.managerComment() == null || dto.managerComment().isBlank())) {
-      throw new IllegalArgumentException("A refusal requires a manager comment");
-    }
+
     lRequest.setStatus(dto.status());
     lRequest.setManagerComment(dto.managerComment());
+    return leaveRequestRepository.save(lRequest);
+  }
+
+  @Transactional
+  public LeaveRequest cancelRequest(CancelLeaveRequestDTO dto, Long employeeId) {
+    authorizationService.employeeLeaveRights(employeeId);
+    LeaveRequest lRequest = leaveRequestRepository.findById(dto.leaveId())
+        .orElseThrow(() -> new IllegalArgumentException("Leave request not found: " + dto.leaveId()));
+    if (lRequest.getEmployee().getId() != employeeId) {
+      throw new IllegalArgumentException("this is not one of your requests");
+    }
+
+    if (lRequest.getStatus() != LeaveRequestStatus.EN_ATTENTE) {
+      throw new IllegalArgumentException("Only a pending leave request can be approved or refused");
+    }
+
+    if (lRequest.getStatus() != LeaveRequestStatus.ANNULEE) {
+      throw new IllegalArgumentException("you can only cancel the request");
+    }
+
+    lRequest.setStatus(dto.status());
     return leaveRequestRepository.save(lRequest);
   }
 
