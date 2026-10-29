@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import ma.atlasrh.atlasrh.departement.exceptions.DepartementHasEmployeesException;
 import ma.atlasrh.atlasrh.employee.exceptions.NoAccessException;
+import ma.atlasrh.atlasrh.leave.exceptions.InvalidDateException;
 
 /**
  * GlobalExceptionHandler
@@ -20,6 +21,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NoAccessException.class)
   public ResponseEntity<String> noAccessHandler(NoAccessException ex) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(InvalidDateException.class)
+  public ResponseEntity<String> invalidDateHandler(InvalidDateException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
 
   @ExceptionHandler(DepartementHasEmployeesException.class)

@@ -44,7 +44,7 @@ public class EmployeeController {
   @GetMapping()
   public Page<GetEmployeeDTO> findAllEmployees(@RequestHeader("user-id") Long employeeId,
       @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(defaultValue = "20") int size,
       @RequestParam(required = false) String firstName,
       @RequestParam(required = false) String sort,
       @RequestParam(required = false) Long departementId) {

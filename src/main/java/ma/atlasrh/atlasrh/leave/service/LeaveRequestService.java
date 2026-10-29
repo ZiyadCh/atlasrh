@@ -16,6 +16,7 @@ import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
 import ma.atlasrh.atlasrh.leave.dto.GetLeaveRequestDTO;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequest;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequestStatus;
+import ma.atlasrh.atlasrh.leave.exceptions.InvalidDateException;
 import ma.atlasrh.atlasrh.leave.mapper.LeaveRequestMapper;
 import ma.atlasrh.atlasrh.leave.repository.LeaveRequestRepository;
 import ma.atlasrh.atlasrh.leave.repository.LeaveTypeRepository;
@@ -31,9 +32,12 @@ public class LeaveRequestService {
   private final AuthorizationService authorizationService;
 
   @Transactional
-  public LeaveRequest create(CreateLeaveRequest dto, Long employeeId) {
+  public LeaveRequest create(CreateLeaveRequest dto, Long employeeId) throws InvalidDateException {
     authorizationService.employeeLeaveRights(employeeId);
     LeaveRequest lRequest = leaveRequestMapper.toEntity(dto);
+    if (lRequest.getStartDate().isAfter(lRequest.getEndDate())) {
+      throw new InvalidDateException("la date de debut ne peut pas etre apres la date fin");
+    }
     int days = (int) lRequest.getStartDate().datesUntil(lRequest.getEndDate().plusDays(1))
         .filter(d -> d.getDayOfWeek() != DayOfWeek.SATURDAY)
         .filter(d -> d.getDayOfWeek() != DayOfWeek.SUNDAY)
