@@ -59,6 +59,13 @@ public class LeaveRequestController {
     return ResponseEntity.status(HttpStatus.OK).build();
   }
 
+  @PatchMapping("/cancel")
+  public ResponseEntity<Void> cancelLeaveRequest(@Valid @RequestBody ChangeLeaveStatus dto,
+      @RequestHeader("user-id") Long employeeId) {
+    leaveRequestService.changeStatus(dto, employeeId);
+    return ResponseEntity.status(HttpStatus.OK).build();
+  }
+
   @GetMapping("/team/pending")
   public List<GetLeaveRequestDTO> findTeamPending(@RequestHeader("user-id") Long employeeId) {
     return leaveRequestService.findTeamPending(employeeId);

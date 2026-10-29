@@ -53,17 +53,34 @@ public class LeaveRequestService {
     authorizationService.leaveRequestRights(employeeId);
     LeaveRequest lRequest = leaveRequestRepository.findById(dto.leaveId())
         .orElseThrow(() -> new IllegalArgumentException("Leave request not found: " + dto.leaveId()));
+
     if (lRequest.getStatus() != LeaveRequestStatus.EN_ATTENTE) {
       throw new IllegalArgumentException("Only a pending leave request can be approved or refused");
     }
-    if (lRequest.getEmployee().getManager() == null
-        || !lRequest.getEmployee().getManager().getId().equals(employeeId)) {
-      throw new NoAccessException("You can only decide on leave requests of your own team");
+
+    if (lRequest.getStatus() == LeaveRequestStatus.ANNULEE) {
+      throw new IllegalArgumentException("Only the employee himself can cancel his request");
     }
-    if (dto.status() == LeaveRequestStatus.REFUSEE
-        && (dto.managerComment() == null || dto.managerComment().isBlank())) {
-      throw new IllegalArgumentException("A refusal requires a manager comment");
+
+    lRequest.setStatus(dto.status());
+    lRequest.setManagerComment(dto.managerComment());
+    return leaveRequestRepository.save(lRequest);
+  }
+
+  @Transactional
+  public LeaveRequest cancelRequest(ChangeLeaveStatus dto, Long employeeId) {
+    authorizationService.employeeLeaveRights(employeeId);
+    LeaveRequest lRequest = leaveRequestRepository.findById(dto.leaveId())
+        .orElseThrow(() -> new IllegalArgumentException("Leave request not found: " + dto.leaveId()));
+
+    if (lRequest.getStatus() != LeaveRequestStatus.EN_ATTENTE) {
+      throw new IllegalArgumentException("Only a pending leave request can be approved or refused");
     }
+
+    if (lRequest.getStatus() != LeaveRequestStatus.ANNULEE) {
+      throw new IllegalArgumentException("you can noly cancel the request");
+    }
+
     lRequest.setStatus(dto.status());
     lRequest.setManagerComment(dto.managerComment());
     return leaveRequestRepository.save(lRequest);
