@@ -17,5 +17,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
   List<Employee> findByDepartement_Id(Long departementId, Sort sort);
 
+  Page<Employee> findByDepartement_Id(Long departementId, Pageable pageable);
+
   Page<Employee> findByFirstNameContainingIgnoreCase(String firstName, Pageable pageable);
+
+  List<Employee> findByManager_Id(Long managerId, Sort sort);
 }
