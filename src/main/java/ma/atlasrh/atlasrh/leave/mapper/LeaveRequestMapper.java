@@ -19,9 +19,6 @@ public interface LeaveRequestMapper {
   @Mapping(target = "jourTravail", ignore = true)
   LeaveRequest toEntity(CreateLeaveRequest dto);
 
-  @Mapping(target = "employeeMatricule", source = "employee.matricule")
-  @Mapping(target = "employeeFirstName", source = "employee.firstName")
-  @Mapping(target = "employeeLastName", source = "employee.lastName")
-  @Mapping(target = "leaveTypeName", source = "leaveType.name")
+  @Mapping(target = "employee", source = "leaveRequest.employee.id")
   GetLeaveRequestDTO toDto(LeaveRequest leaveRequest);
 }

@@ -1,6 +1,8 @@
 package ma.atlasrh.atlasrh.leave.dto;
 
 import java.time.LocalDate;
+
+import ma.atlasrh.atlasrh.employee.entity.Employee;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequestStatus;
 
 /**
@@ -13,9 +15,5 @@ public record GetLeaveRequestDTO(
     int jourTravail,
     String reason,
     LeaveRequestStatus status,
-    String managerComment,
-    String employeeMatricule,
-    String employeeFirstName,
-    String employeeLastName,
-    String leaveTypeName) {
+    Long employee) {
 }

@@ -73,6 +73,9 @@ public class LeaveRequestService {
     authorizationService.employeeLeaveRights(employeeId);
     LeaveRequest lRequest = leaveRequestRepository.findById(dto.leaveId())
         .orElseThrow(() -> new IllegalArgumentException("Leave request not found: " + dto.leaveId()));
+    if (lRequest.getEmployee().getId() != employeeId) {
+      throw new IllegalArgumentException("this is not one of your requests");
+    }
 
     if (lRequest.getStatus() != LeaveRequestStatus.EN_ATTENTE) {
       throw new IllegalArgumentException("Only a pending leave request can be approved or refused");
