@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import ma.atlasrh.atlasrh.employee.exceptions.NoAccessException;
 import ma.atlasrh.atlasrh.employee.repository.EmployeeRepository;
 import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
+import ma.atlasrh.atlasrh.leave.dto.CancelLeaveRequestDTO;
 import ma.atlasrh.atlasrh.leave.dto.ChangeLeaveStatus;
 import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
 import ma.atlasrh.atlasrh.leave.dto.GetLeaveRequestDTO;
@@ -68,7 +69,7 @@ public class LeaveRequestService {
   }
 
   @Transactional
-  public LeaveRequest cancelRequest(ChangeLeaveStatus dto, Long employeeId) {
+  public LeaveRequest cancelRequest(CancelLeaveRequestDTO dto, Long employeeId) {
     authorizationService.employeeLeaveRights(employeeId);
     LeaveRequest lRequest = leaveRequestRepository.findById(dto.leaveId())
         .orElseThrow(() -> new IllegalArgumentException("Leave request not found: " + dto.leaveId()));
@@ -78,11 +79,10 @@ public class LeaveRequestService {
     }
 
     if (lRequest.getStatus() != LeaveRequestStatus.ANNULEE) {
-      throw new IllegalArgumentException("you can noly cancel the request");
+      throw new IllegalArgumentException("you can only cancel the request");
     }
 
     lRequest.setStatus(dto.status());
-    lRequest.setManagerComment(dto.managerComment());
     return leaveRequestRepository.save(lRequest);
   }
 

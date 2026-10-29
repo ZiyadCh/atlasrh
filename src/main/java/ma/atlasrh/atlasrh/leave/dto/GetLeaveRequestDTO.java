@@ -7,6 +7,7 @@ import ma.atlasrh.atlasrh.leave.entity.LeaveRequestStatus;
  * GetLeaveRequestDTO
  */
 public record GetLeaveRequestDTO(
+    Long id,
     LocalDate startDate,
     LocalDate endDate,
     int jourTravail,
