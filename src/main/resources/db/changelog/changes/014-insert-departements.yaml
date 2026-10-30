@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: departement-insert-1
+      author: initial
+      changes:
+        - insert:
+            tableName: departements
+            columns:
+              - column:
+                  name: name
+                  value: Ressources Humaines
+              - column:
+                  name: description
+                  value: Département des ressources humaines
+        - insert:
+            tableName: departements
+            columns:
+              - column:
+                  name: name
+                  value: Informatique
+              - column:
+                  name: description
+                  value: Département informatique et systèmes
+        - insert:
+            tableName: departements
+            columns:
+              - column:
+                  name: name
+                  value: Commercial
+              - column:
+                  name: description
+                  value: Département commercial et ventes
+        - insert:
+            tableName: departements
+            columns:
+              - column:
+                  name: name
+                  value: Marketing
+              - column:
+                  name: description
+                  value: Département marketing et communication
+        - insert:
+            tableName: departements
+            columns:
+              - column:
+                  name: name
+                  value: Finance
+              - column:
+                  name: description
+                  value: Département financier et comptabilité

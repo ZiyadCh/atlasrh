@@ -104,9 +104,11 @@ public class EmployeeService {
   }
 
   private void setDepartement(Employee employee, Long departementId) {
-    if (departementId != null) {
-      employee.setDepartement(departementRepository.findById(departementId).orElse(null));
+    if (departementId == null) {
+      throw new IllegalArgumentException("Le département est obligatoire");
     }
+    employee.setDepartement(departementRepository.findById(departementId)
+        .orElseThrow(() -> new IllegalArgumentException("Département introuvable: " + departementId)));
   }
 
   private void setManager(Employee employee, Long managerId) {

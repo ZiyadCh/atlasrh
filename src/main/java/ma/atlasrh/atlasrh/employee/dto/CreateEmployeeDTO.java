@@ -16,6 +16,6 @@ public record CreateEmployeeDTO(
     @Size(max = 100, message = "Le poste ne doit pas dépasser 100 caractères") String poste,
     @NotNull(message = "Le rôle est obligatoire") Role role,
     LocalDate hireDate,
-    Long departementId,
+    @NotNull(message = "Le département est obligatoire") Long departementId,
     Long managerId) {
 }

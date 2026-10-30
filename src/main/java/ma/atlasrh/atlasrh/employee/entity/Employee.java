@@ -46,7 +46,7 @@ public class Employee {
   private Role role;
   private LocalDate hireDate;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   private Departement departement;
 
   @ManyToOne(optional = true)

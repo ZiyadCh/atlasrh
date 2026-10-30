@@ -6,9 +6,19 @@ databaseChangeLog:
   - include:
       file: classpath:db/changelog/changes/004-create-departements.yaml
   - include:
+      file: classpath:db/changelog/changes/014-insert-departements.yaml
+  - include:
+      file: classpath:db/changelog/changes/015-make-departement-mandatory.yaml
+  - include:
       file: classpath:db/changelog/changes/005-create-contract-types.yaml
   - include:
       file: classpath:db/changelog/changes/006-create-contracts.yaml
+  - include:
+      file: classpath:db/changelog/changes/011-add-contract-status.yaml
+  - include:
+      file: classpath:db/changelog/changes/016-insert-employees.yaml
+  - include:
+      file: classpath:db/changelog/changes/017-insert-contracts.yaml
   - include:
       file: classpath:db/changelog/changes/007-create-leave-types.yaml
   - include:
@@ -17,8 +27,6 @@ databaseChangeLog:
       file: classpath:db/changelog/changes/009-create-leave-requests.yaml
   - include:
       file: classpath:db/changelog/changes/010-add-employee-manager.yaml
-  - include:
-      file: classpath:db/changelog/changes/011-add-contract-status.yaml
   - include:
       file: classpath:db/changelog/changes/012-insert-leave-types.yaml
   - include:

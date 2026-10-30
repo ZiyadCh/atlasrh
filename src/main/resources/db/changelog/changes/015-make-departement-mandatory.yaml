@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: departement-mandatory-1
+      author: initial
+      changes:
+        - modifyDataType:
+            tableName: employees
+            columnName: departement_id
+            newDataType: BIGINT
+            constraints:
+              nullable: false
