@@ -23,6 +23,7 @@ public interface EmployeeMapper {
   @Mapping(target = "departement", source = "departement.name")
   @Mapping(target = "managerId", source = "manager.id")
   @Mapping(target = "manager", expression = "java(employee.getManager() == null ? null : employee.getManager().getFirstName() + \" \" + employee.getManager().getLastName())")
+  @Mapping(target = "anciennete", expression = "java(employee.getHireDate() == null ? null : java.time.Period.between(employee.getHireDate(), java.time.LocalDate.now()).getYears() + \" ans et \" + java.time.Period.between(employee.getHireDate(), java.time.LocalDate.now()).getMonths() + \" mois\")")
   GetEmployeeDTO toGetDto(Employee employee);
 
   List<GetEmployeeDTO> toGetDtoList(List<Employee> employees);

@@ -21,6 +21,7 @@ import ma.atlasrh.atlasrh.leave.dto.CancelLeaveRequestDTO;
 import ma.atlasrh.atlasrh.leave.dto.ChangeLeaveStatus;
 import ma.atlasrh.atlasrh.leave.dto.CreateLeaveRequest;
 import ma.atlasrh.atlasrh.leave.dto.GetLeaveRequestDTO;
+import ma.atlasrh.atlasrh.leave.dto.LeaveBalanceDTO;
 import ma.atlasrh.atlasrh.leave.entity.LeaveRequestStatus;
 import ma.atlasrh.atlasrh.leave.service.LeaveRequestService;
 
@@ -78,10 +79,9 @@ public class LeaveRequestController {
     return leaveRequestService.findMyRequests(employeeId, status);
   }
 
-  @DeleteMapping("/{id}/cancel")
-  public ResponseEntity<Void> cancelLeaveRequest(@PathVariable Long id,
-      @RequestHeader("user-id") Long employeeId) {
-    leaveRequestService.cancel(id, employeeId);
-    return ResponseEntity.noContent().build();
+  @GetMapping("/balance")
+  public List<LeaveBalanceDTO> getBalances(@RequestHeader("user-id") Long employeeId) {
+    return leaveRequestService.getBalances(employeeId);
   }
+
 }

@@ -8,5 +8,6 @@ import ma.atlasrh.atlasrh.employee.entity.Role;
  * GetEmployeeDTO
  */
 public record GetEmployeeDTO(Long id, String matricule, String firstName, String lastName, String email, String poste,
-    Role role, LocalDate hireDate, Long departementId, String departement, Long managerId, String manager) {
+    Role role, LocalDate hireDate, Long departementId, String departement, Long managerId, String manager,
+    String anciennete) {
 }
