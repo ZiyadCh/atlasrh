@@ -10,5 +10,10 @@ spring:
     password: ${DB_PASSWORD:changeme}
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: chetoziyad@gmail.com
+    password: ${EM_PASSWORD:changeme}
 server:
   port: 8081
