@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -133,19 +134,15 @@ public class LeaveRequestService {
     authorizationService.employeeLeaveRights(employeeId);
     LeaveRequest lRequest = leaveRequestRepository.findById(dto.leaveId())
         .orElseThrow(() -> new IllegalArgumentException("Leave request not found: " + dto.leaveId()));
-    if (lRequest.getEmployee().getId() != employeeId) {
+    if (!Objects.equals(lRequest.getEmployee().getId(), employeeId)) {
       throw new IllegalArgumentException("this is not one of your requests");
     }
 
     if (lRequest.getStatus() != LeaveRequestStatus.EN_ATTENTE) {
-      throw new IllegalArgumentException("Only a pending leave request can be approved or refused");
+      throw new IllegalArgumentException("Only a pending leave request can be cancelled");
     }
 
-    if (lRequest.getStatus() != LeaveRequestStatus.ANNULEE) {
-      throw new IllegalArgumentException("you can only cancel the request");
-    }
-
-    lRequest.setStatus(dto.status());
+    lRequest.setStatus(LeaveRequestStatus.ANNULEE);
     return leaveRequestRepository.save(lRequest);
   }
 
