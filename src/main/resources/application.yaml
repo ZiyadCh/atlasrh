@@ -12,3 +12,10 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 server:
   port: 8081
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha

@@ -42,20 +42,27 @@ public class LeaveRequestService {
     if (lRequest.getStartDate().isAfter(lRequest.getEndDate())) {
       throw new InvalidDateException("la date de debut ne peut pas etre apres la date fin");
     }
+    // count weekdays without weekends
+    // /////////////
     int days = (int) lRequest.getStartDate().datesUntil(lRequest.getEndDate().plusDays(1))
         .filter(d -> d.getDayOfWeek() != DayOfWeek.SATURDAY)
         .filter(d -> d.getDayOfWeek() != DayOfWeek.SUNDAY)
         .count();
     lRequest.setJourTravail(days);
-    int remaining = remainingBalance(employeeId, dto.leaveTypeId(), Year.now().getValue());
-    if (days > remaining) {
-      throw new IllegalArgumentException("Solde insuffisant pour ce type de conge (reste : " + remaining + " jour(s))");
+    // /////////////
+    LeaveType leaveType = leaveTypeRepository.findById(dto.leaveTypeId())
+        .orElseThrow(() -> new IllegalArgumentException("Leave type not found: " + dto.leaveTypeId()));
+
+    // count days used from prievous conges
+    // /////////////
+    int daysUsed = approvedDaysUsed(employeeId, dto.leaveTypeId(), Year.now().getValue());
+    if (daysUsed >= leaveType.getDaysPerYear()) {
+      throw new IllegalArgumentException("Not enough days left for this leave type");
     }
+    // /////////////
 
     lRequest.setEmployee(employeeRepository.findById(employeeId)
         .orElseThrow(() -> new IllegalStateException("Employee not found: " + employeeId)));
-    LeaveType leaveType = leaveTypeRepository.findById(dto.leaveTypeId())
-        .orElseThrow(() -> new IllegalArgumentException("Leave type not found: " + dto.leaveTypeId()));
     lRequest.setLeaveType(leaveType);
     lRequest.setStatus(LeaveRequestStatus.EN_ATTENTE);
     return leaveRequestRepository.save(lRequest);
@@ -64,15 +71,17 @@ public class LeaveRequestService {
   public int remainingBalance(Long employeeId, Long leaveTypeId, int year) {
     LeaveType leaveType = leaveTypeRepository.findById(leaveTypeId)
         .orElseThrow(() -> new IllegalArgumentException("Leave type not found: " + leaveTypeId));
+    return leaveType.getDaysPerYear() - approvedDaysUsed(employeeId, leaveTypeId, year);
+  }
+
+  private int approvedDaysUsed(Long employeeId, Long leaveTypeId, int year) {
     LocalDate start = LocalDate.of(year, 1, 1);
     LocalDate end = LocalDate.of(year, 12, 31);
-    List<LeaveRequest> approved = leaveRequestRepository.findByEmployee_IdAndStatusAndStartDateBetween(
-        employeeId, LeaveRequestStatus.APPROUVEE, start, end);
-    int daysUsed = approved.stream()
+    return leaveRequestRepository.findByEmployee_IdAndStatusAndStartDateBetween(
+        employeeId, LeaveRequestStatus.APPROUVEE, start, end).stream()
         .filter(r -> r.getLeaveType() != null && r.getLeaveType().getId().equals(leaveTypeId))
         .mapToInt(LeaveRequest::getJourTravail)
         .sum();
-    return leaveType.getDaysPerYear() - daysUsed;
   }
 
   @Transactional(readOnly = true)
