@@ -24,6 +24,7 @@ import ma.atlasrh.atlasrh.leave.exceptions.InvalidDateException;
 import ma.atlasrh.atlasrh.leave.mapper.LeaveRequestMapper;
 import ma.atlasrh.atlasrh.leave.repository.LeaveRequestRepository;
 import ma.atlasrh.atlasrh.leave.repository.LeaveTypeRepository;
+import ma.atlasrh.atlasrh.mail.MailService;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,7 @@ public class LeaveRequestService {
   private final EmployeeRepository employeeRepository;
   private final LeaveRequestMapper leaveRequestMapper;
   private final AuthorizationService authorizationService;
+  private final MailService mailService;
 
   @Transactional
   public LeaveRequest create(CreateLeaveRequest dto, Long employeeId) throws InvalidDateException {
@@ -116,7 +118,11 @@ public class LeaveRequestService {
 
     lRequest.setStatus(dto.status());
     lRequest.setManagerComment(dto.managerComment());
-    return leaveRequestRepository.save(lRequest);
+    LeaveRequest saved = leaveRequestRepository.save(lRequest);
+    if (dto.status() == LeaveRequestStatus.APPROUVEE) {
+      mailService.sendLeaveAccepted(saved.getEmployee().getId());
+    }
+    return saved;
   }
 
   @Transactional
