@@ -65,6 +65,46 @@ public class EmployeeControllerTest {
         .andExpect(jsonPath("$.content[0].matricule").value("MAT001"));
   }
 
+  // @Test
+  // public void shouldReturnPageOfEmployeesSorted() throws Exception {
+  // Long employeeId = 1L;
+  // GetEmployeeDTO employee = new GetEmployeeDTO(2L, "MAT001", "Ahmed", "Alami",
+  // "ahmed@atlas.ma", "Developpeur", Role.EMPLOYE, LocalDate.of(2025, 1, 1), 3L,
+  // "IT", null,
+  // null, "1 an");
+  // Page<GetEmployeeDTO> page = new PageImpl<>(List.of(employee));
+
+  // when(employeeService.findAll(isNull(), isNull(), any(Pageable.class),
+  // eq(employeeId)))
+  // .thenReturn(page);
+
+  // mockMvc.perform(get("/api/employee")
+  // .param("sort", "firstName")
+  // .header("user-id", employeeId))
+  // .andExpect(status().isOk())
+  // .andExpect(jsonPath("$.content[0].firstName").value("Ahmed"));
+  // }
+
+  // @Test
+  // public void shouldReturnPageOfEmployeesWhenSortIsBlank() throws Exception {
+  // Long employeeId = 1L;
+  // GetEmployeeDTO employee = new GetEmployeeDTO(2L, "MAT001", "Ahmed", "Alami",
+  // "ahmed@atlas.ma", "Developpeur", Role.EMPLOYE, LocalDate.of(2025, 1, 1), 3L,
+  // "IT", null,
+  // null, "1 an");
+  // Page<GetEmployeeDTO> page = new PageImpl<>(List.of(employee));
+
+  // when(employeeService.findAll(isNull(), isNull(), any(Pageable.class),
+  // eq(employeeId)))
+  // .thenReturn(page);
+
+  // mockMvc.perform(get("/api/employee")
+  // .param("sort", "")
+  // .header("user-id", employeeId))
+  // .andExpect(status().isOk())
+  // .andExpect(jsonPath("$.content[0].firstName").value("Ahmed"));
+  // }
+
   @Test
   public void shouldReturnEmployeeById() throws Exception {
     Long employeeId = 1L;

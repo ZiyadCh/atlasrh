@@ -167,7 +167,7 @@ public class LeaveRequestControllerTest {
         new GetLeaveRequestDTO(1L, LocalDate.of(2026, 1, 5), LocalDate.of(2026, 1, 7), 3, "Vacances",
             LeaveRequestStatus.EN_ATTENTE, employeeId));
 
-    when(leaveRequestService.findMyRequests(employeeId, isNull())).thenReturn(requests);
+    when(leaveRequestService.findMyRequests(eq(employeeId), isNull())).thenReturn(requests);
 
     mockMvc.perform(get("/api/leave/my")
         .header("user-id", employeeId))
