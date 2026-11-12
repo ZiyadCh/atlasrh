@@ -2,6 +2,7 @@ package ma.atlasrh.atlasrh.employee.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -114,4 +115,18 @@ public class EmployeeService {
       employee.setManager(employeeRepository.findById(managerId).orElse(null));
     }
   }
+
+  private List<Employee> separateEmployees(List<Employee> employees) {
+    List<Employee> employeesWithManager = employees.stream()
+        .filter(e -> e.getManager() != null)
+        .toList();
+
+    List<Employee> employeesWithoutManager = employees.stream()
+        .filter(e -> e.getManager() == null)
+        .toList();
+
+    Map<Boolean, List<Employee>> employeesWM = employees.stream()
+        .collect(Collectors.groupingBy(Employee::getManager));
+  }
+
 }
