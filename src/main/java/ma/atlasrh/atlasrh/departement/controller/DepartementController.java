@@ -18,8 +18,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.atlasrh.atlasrh.departement.dto.CreateDepartementDTO;
 import ma.atlasrh.atlasrh.departement.dto.GetDepartementDTO;
+import ma.atlasrh.atlasrh.departement.dto.GetDepartementWithEmployeesDTO;
 import ma.atlasrh.atlasrh.departement.entity.Departement;
 import ma.atlasrh.atlasrh.departement.service.DepartementService;
+import ma.atlasrh.atlasrh.employee.dto.GetEmployeeDTO;
 
 /**
  * DepartementController
@@ -42,10 +44,22 @@ public class DepartementController {
     return dService.findAll(employeeId);
   }
 
+  @GetMapping("/with-employees")
+  public List<GetDepartementWithEmployeesDTO> findAllDepartementsWithEmployees(
+      @RequestHeader("user-id") Long employeeId) {
+    return dService.findAllWithEmployees(employeeId);
+  }
+
   @GetMapping("/{id}")
   public GetDepartementDTO findDepartementById(@PathVariable Long id,
       @RequestHeader("user-id") Long employeeId) {
     return dService.findById(id, employeeId).orElse(null);
+  }
+
+  @GetMapping("/{id}/employees")
+  public List<GetEmployeeDTO> findEmployeesByDepartement(@PathVariable Long id,
+      @RequestHeader("user-id") Long employeeId) {
+    return dService.findEmployeesByDepartement(id, employeeId);
   }
 
   @PutMapping("/{id}")

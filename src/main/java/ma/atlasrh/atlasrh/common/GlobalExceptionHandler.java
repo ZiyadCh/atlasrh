@@ -99,7 +99,55 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(DataIntegrityViolationException.class)
   public ResponseEntity<String> dataIntegrityHandler(DataIntegrityViolationException ex) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body("Database constraint violation");
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(dataIntegrityMessage(ex));
+  }
+
+  private String dataIntegrityMessage(DataIntegrityViolationException ex) {
+    String message = ex.getMostSpecificCause().getMessage();
+    if (message == null) {
+      return "Violation de contrainte de base de données";
+    }
+    String lower = message.toLowerCase();
+    if (lower.contains("duplicate key") || lower.contains("unique constraint")
+        || lower.contains("duplicate entry")) {
+      return duplicateMessage(message);
+    }
+    if (lower.contains("foreign key")) {
+      return "Impossible de modifier cet élément car il est référencé par d'autres données";
+    }
+    if (lower.contains("not-null") || lower.contains("null value")) {
+      return "Un champ obligatoire est manquant";
+    }
+    return message;
+  }
+
+  private String duplicateMessage(String message) {
+    String constraint = constraintName(message);
+    if (constraint.contains("employees") && constraint.contains("email")) {
+      return "Un employé avec cet email existe déjà";
+    }
+    if (constraint.contains("employees") && constraint.contains("matricule")) {
+      return "Un employé avec ce matricule existe déjà";
+    }
+    if (constraint.contains("departements") && constraint.contains("name")) {
+      return "Un département avec ce nom existe déjà";
+    }
+    if (constraint.contains("contract_types") && constraint.contains("name")) {
+      return "Un type de contrat avec ce nom existe déjà";
+    }
+    if (constraint.contains("leave_types") && constraint.contains("name")) {
+      return "Un type de congé avec ce nom existe déjà";
+    }
+    if (constraint.contains("leave_request_statuses") && constraint.contains("name")) {
+      return "Un statut de congé avec ce nom existe déjà";
+    }
+    return "Une valeur en doublon existe déjà";
+  }
+
+  private String constraintName(String message) {
+    int start = message.indexOf('"');
+    int end = start < 0 ? -1 : message.indexOf('"', start + 1);
+    return start >= 0 && end > start ? message.substring(start + 1, end) : "";
   }
 
   @ExceptionHandler(Exception.class)

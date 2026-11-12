@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import ma.atlasrh.atlasrh.departement.repository.DepartementRepository;
 import ma.atlasrh.atlasrh.employee.dto.CreateEmployeeDTO;
@@ -112,7 +113,9 @@ public class EmployeeService {
 
   private void setManager(Employee employee, Long managerId) {
     if (managerId != null) {
-      employee.setManager(employeeRepository.findById(managerId).orElse(null));
+      Employee manager = employeeRepository.findById(managerId)
+          .orElseThrow(() -> new EntityNotFoundException("Manager with id " + managerId + " not found"));
+      employee.setManager(manager);
     }
   }
 

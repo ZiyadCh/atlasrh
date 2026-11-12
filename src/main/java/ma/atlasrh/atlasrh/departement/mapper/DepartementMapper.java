@@ -7,9 +7,11 @@ import org.mapstruct.Mapping;
 
 import ma.atlasrh.atlasrh.departement.dto.CreateDepartementDTO;
 import ma.atlasrh.atlasrh.departement.dto.GetDepartementDTO;
+import ma.atlasrh.atlasrh.departement.dto.GetDepartementWithEmployeesDTO;
 import ma.atlasrh.atlasrh.departement.entity.Departement;
+import ma.atlasrh.atlasrh.employee.mapper.EmployeeMapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = EmployeeMapper.class)
 public interface DepartementMapper {
 
   @Mapping(target = "id", ignore = true)
@@ -20,4 +22,9 @@ public interface DepartementMapper {
   GetDepartementDTO toGetDto(Departement departement);
 
   List<GetDepartementDTO> toGetDtoList(List<Departement> departements);
+
+  @Mapping(target = "nom", source = "name")
+  GetDepartementWithEmployeesDTO toGetWithEmployeesDto(Departement departement);
+
+  List<GetDepartementWithEmployeesDTO> toGetWithEmployeesDtoList(List<Departement> departements);
 }
