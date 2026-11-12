@@ -116,17 +116,4 @@ public class EmployeeService {
     }
   }
 
-  private List<Employee> separateEmployees(List<Employee> employees) {
-    List<Employee> employeesWithManager = employees.stream()
-        .filter(e -> e.getManager() != null)
-        .toList();
-
-    List<Employee> employeesWithoutManager = employees.stream()
-        .filter(e -> e.getManager() == null)
-        .toList();
-
-    Map<Boolean, List<Employee>> employeesWM = employees.stream()
-        .collect(Collectors.groupingBy(Employee::getManager));
-  }
-
 }
