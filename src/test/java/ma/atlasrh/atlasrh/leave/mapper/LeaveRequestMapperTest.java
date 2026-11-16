@@ -59,4 +59,24 @@ class LeaveRequestMapperTest {
     assertThat(result.status()).isEqualTo(LeaveRequestStatus.EN_ATTENTE);
     assertThat(result.employee()).isEqualTo(2L);
   }
+
+  @Test
+  void toDto_shouldMapNullEmployeeIdWhenEmployeeIsNull() {
+    LeaveRequest request = new LeaveRequest();
+    request.setId(1L);
+
+    GetLeaveRequestDTO result = mapper.toDto(request);
+
+    assertThat(result.employee()).isNull();
+  }
+
+  @Test
+  void toEntity_shouldReturnNullWhenDtoIsNull() {
+    assertThat(mapper.toEntity(null)).isNull();
+  }
+
+  @Test
+  void toDto_shouldReturnNullWhenRequestIsNull() {
+    assertThat(mapper.toDto(null)).isNull();
+  }
 }

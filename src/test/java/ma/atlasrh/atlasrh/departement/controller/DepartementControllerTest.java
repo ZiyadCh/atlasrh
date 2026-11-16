@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,9 +28,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import ma.atlasrh.atlasrh.departement.dto.CreateDepartementDTO;
 import ma.atlasrh.atlasrh.departement.dto.GetDepartementDTO;
+import ma.atlasrh.atlasrh.departement.dto.GetDepartementWithEmployeesDTO;
 import ma.atlasrh.atlasrh.departement.entity.Departement;
 import ma.atlasrh.atlasrh.departement.exceptions.DepartementHasEmployeesException;
 import ma.atlasrh.atlasrh.departement.service.DepartementService;
+import ma.atlasrh.atlasrh.employee.dto.GetEmployeeDTO;
+import ma.atlasrh.atlasrh.employee.entity.Role;
 
 /**
  * DepartementControllerTest
@@ -180,5 +184,42 @@ public class DepartementControllerTest {
     mockMvc.perform(delete("/api/departement/{id}", id)
         .header("user-id", employeeId))
         .andExpect(status().isConflict());
+  }
+
+  @Test
+  public void shouldReturnDepartementsWithEmployees() throws Exception {
+    Long employeeId = 1L;
+    GetEmployeeDTO employee = new GetEmployeeDTO(2L, "MAT001", "Ahmed", "Alami",
+        "ahmed@atlas.ma", "Developpeur", Role.EMPLOYE, LocalDate.of(2025, 1, 1), 5L, "IT", null,
+        null, "1 an");
+    List<GetDepartementWithEmployeesDTO> departements = List.of(
+        new GetDepartementWithEmployeesDTO(5L, "RH", "Ressources humaines", List.of(employee)));
+
+    when(departementService.findAllWithEmployees(employeeId)).thenReturn(departements);
+
+    mockMvc.perform(get("/api/departement/with-employees")
+        .header("user-id", employeeId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(5L))
+        .andExpect(jsonPath("$[0].nom").value("RH"))
+        .andExpect(jsonPath("$[0].employees[0].firstName").value("Ahmed"));
+  }
+
+  @Test
+  public void shouldReturnEmployeesOfDepartement() throws Exception {
+    Long employeeId = 1L;
+    Long id = 5L;
+    GetEmployeeDTO employee = new GetEmployeeDTO(2L, "MAT001", "Ahmed", "Alami",
+        "ahmed@atlas.ma", "Developpeur", Role.EMPLOYE, LocalDate.of(2025, 1, 1), id, "IT", null,
+        null, "1 an");
+
+    when(departementService.findEmployeesByDepartement(id, employeeId))
+        .thenReturn(List.of(employee));
+
+    mockMvc.perform(get("/api/departement/{id}/employees", id)
+        .header("user-id", employeeId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(2L))
+        .andExpect(jsonPath("$[0].firstName").value("Ahmed"));
   }
 }

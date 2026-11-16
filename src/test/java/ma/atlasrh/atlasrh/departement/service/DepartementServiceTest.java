@@ -17,13 +17,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.springframework.data.domain.Sort;
+
 import ma.atlasrh.atlasrh.departement.dto.CreateDepartementDTO;
 import ma.atlasrh.atlasrh.departement.dto.GetDepartementDTO;
+import ma.atlasrh.atlasrh.departement.dto.GetDepartementWithEmployeesDTO;
 import ma.atlasrh.atlasrh.departement.entity.Departement;
 import ma.atlasrh.atlasrh.departement.exceptions.DepartementHasEmployeesException;
 import ma.atlasrh.atlasrh.departement.mapper.DepartementMapper;
 import ma.atlasrh.atlasrh.departement.repository.DepartementRepository;
+import ma.atlasrh.atlasrh.employee.dto.GetEmployeeDTO;
+import ma.atlasrh.atlasrh.employee.entity.Employee;
+import ma.atlasrh.atlasrh.employee.entity.Role;
 import ma.atlasrh.atlasrh.employee.exceptions.NoAccessException;
+import ma.atlasrh.atlasrh.employee.mapper.EmployeeMapper;
 import ma.atlasrh.atlasrh.employee.repository.EmployeeRepository;
 import ma.atlasrh.atlasrh.employee.service.AuthorizationService;
 
@@ -41,6 +48,8 @@ public class DepartementServiceTest {
   AuthorizationService authorizationService;
   @Mock
   EmployeeRepository employeeRepository;
+  @Mock
+  EmployeeMapper employeeMapper;
   @InjectMocks
   DepartementService departementService;
 
@@ -200,5 +209,51 @@ public class DepartementServiceTest {
         .isInstanceOf(DepartementHasEmployeesException.class);
 
     verify(departementRepository, never()).deleteById(id);
+  }
+
+  @Test
+  void findEmployeesByDepartement_shouldReturnEmployees() {
+    Long employeeId = 1L;
+    Long departementId = 5L;
+
+    Employee employee = new Employee();
+    employee.setId(2L);
+
+    GetEmployeeDTO dto = new GetEmployeeDTO(2L, "MAT001", "Ahmed", "Alami", "ahmed@atlas.ma",
+        "Developpeur", Role.EMPLOYE, java.time.LocalDate.of(2025, 1, 1), departementId, "IT", null,
+        null, "1 an");
+
+    when(employeeRepository.findByDepartement_Id(departementId, Sort.unsorted()))
+        .thenReturn(List.of(employee));
+    when(employeeMapper.toGetDtoList(List.of(employee))).thenReturn(List.of(dto));
+
+    List<GetEmployeeDTO> result = departementService.findEmployeesByDepartement(departementId,
+        employeeId);
+
+    assertThat(result).containsExactly(dto);
+    verify(authorizationService).departementRights(employeeId);
+  }
+
+  @Test
+  void findAllWithEmployees_shouldReturnDepartementsWithEmployees() {
+    Long employeeId = 1L;
+
+    Departement departement = new Departement();
+    departement.setId(1L);
+    departement.setName("RH");
+    departement.setDescription("Ressources humaines");
+
+    GetDepartementWithEmployeesDTO dto = new GetDepartementWithEmployeesDTO(1L, "RH",
+        "Ressources humaines", List.of());
+
+    when(departementRepository.findAllWithEmployees()).thenReturn(List.of(departement));
+    when(departementMapper.toGetWithEmployeesDtoList(List.of(departement)))
+        .thenReturn(List.of(dto));
+
+    List<GetDepartementWithEmployeesDTO> result = departementService
+        .findAllWithEmployees(employeeId);
+
+    assertThat(result).containsExactly(dto);
+    verify(authorizationService).departementRights(employeeId);
   }
 }

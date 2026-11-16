@@ -88,4 +88,19 @@ class ContractMapperTest {
     assertThat(result).extracting(GetContractDTO::id)
         .containsExactly(1L, 2L);
   }
+
+  @Test
+  void toEntity_shouldReturnNullWhenDtoIsNull() {
+    assertThat(mapper.toEntity(null)).isNull();
+  }
+
+  @Test
+  void toGetDto_shouldReturnNullWhenContractIsNull() {
+    assertThat(mapper.toGetDto(null)).isNull();
+  }
+
+  @Test
+  void toGetDtoList_shouldReturnNullWhenListIsNull() {
+    assertThat(mapper.toGetDtoList(null)).isNull();
+  }
 }

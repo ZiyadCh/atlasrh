@@ -28,4 +28,9 @@ class LeaveStatusMapperTest {
     assertThat(result.getStartDate()).isNull();
     assertThat(result.getEndDate()).isNull();
   }
+
+  @Test
+  void toEntity_shouldReturnNullWhenDtoIsNull() {
+    assertThat(mapper.toEntity(null)).isNull();
+  }
 }

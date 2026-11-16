@@ -120,10 +120,6 @@ public class LeaveRequestService {
       throw new IllegalArgumentException("Only a pending leave request can be approved or refused");
     }
 
-    if (lRequest.getStatus() == LeaveRequestStatus.ANNULEE) {
-      throw new IllegalArgumentException("Only the employee himself can cancel his request");
-    }
-
     lRequest.setStatus(dto.status());
     lRequest.setManagerComment(dto.managerComment());
     return leaveRequestRepository.save(lRequest);

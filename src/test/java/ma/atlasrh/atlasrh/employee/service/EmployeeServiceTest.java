@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import jakarta.persistence.EntityNotFoundException;
 import ma.atlasrh.atlasrh.departement.entity.Departement;
 import ma.atlasrh.atlasrh.departement.repository.DepartementRepository;
 import ma.atlasrh.atlasrh.employee.dto.CreateEmployeeDTO;
@@ -273,5 +274,173 @@ public class EmployeeServiceTest {
 
     verify(authorizationService).employeeRights(employeeId);
     verify(employeeRepository).deleteById(id);
+  }
+
+  @Test
+  void create_shouldThrowWhenManagerNotFound() {
+    Long employeeId = 1L;
+    Long managerId = 4L;
+    CreateEmployeeDTO dto = new CreateEmployeeDTO("MAT001", "Ahmed", "Alami", "ahmed@atlas.ma",
+        "Developpeur", Role.EMPLOYE, LocalDate.of(2025, 1, 1), null, managerId);
+
+    Employee employee = new Employee();
+    when(employeeMapper.toEntity(dto)).thenReturn(employee);
+    when(employeeRepository.findById(managerId)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> employeeService.create(dto, employeeId))
+        .isInstanceOf(EntityNotFoundException.class)
+        .hasMessageContaining("Manager with id " + managerId);
+
+    verify(employeeRepository, never()).save(any());
+  }
+
+  @Test
+  void findAllList_shouldReturnAllWhenNoFilters() {
+    Long employeeId = 1L;
+    Sort sort = Sort.by("firstName");
+
+    Employee employee = new Employee();
+    employee.setId(2L);
+    GetEmployeeDTO dto = dto(2L);
+
+    when(employeeRepository.findAll(sort)).thenReturn(List.of(employee));
+    when(employeeMapper.toGetDtoList(List.of(employee))).thenReturn(List.of(dto));
+
+    List<GetEmployeeDTO> result = employeeService.findAll(null, null, sort, employeeId);
+
+    assertThat(result).containsExactly(dto);
+    verify(authorizationService).employeeRights(employeeId);
+  }
+
+  @Test
+  void findAllList_shouldFilterByDepartement() {
+    Long employeeId = 1L;
+    Long departementId = 3L;
+    Sort sort = Sort.unsorted();
+
+    Employee employee = new Employee();
+    employee.setId(2L);
+    GetEmployeeDTO dto = dto(2L);
+
+    when(employeeRepository.findByDepartement_Id(departementId, sort))
+        .thenReturn(List.of(employee));
+    when(employeeMapper.toGetDtoList(List.of(employee))).thenReturn(List.of(dto));
+
+    List<GetEmployeeDTO> result = employeeService.findAll(null, departementId, sort, employeeId);
+
+    assertThat(result).containsExactly(dto);
+  }
+
+  @Test
+  void findAllList_shouldSearchByFirstName() {
+    Long employeeId = 1L;
+    String search = "Ahmed";
+    Sort sort = Sort.unsorted();
+    Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
+
+    Employee employee = new Employee();
+    employee.setId(2L);
+    GetEmployeeDTO dto = dto(2L);
+
+    when(employeeRepository.findByFirstNameContainingIgnoreCase(search, pageable))
+        .thenReturn(new PageImpl<>(List.of(employee)));
+    when(employeeMapper.toGetDtoList(List.of(employee))).thenReturn(List.of(dto));
+
+    List<GetEmployeeDTO> result = employeeService.findAll(search, null, sort, employeeId);
+
+    assertThat(result).containsExactly(dto);
+  }
+
+  @Test
+  void findAllList_shouldIgnoreBlankSearch() {
+    Long employeeId = 1L;
+    Sort sort = Sort.unsorted();
+
+    Employee employee = new Employee();
+    employee.setId(2L);
+    GetEmployeeDTO dto = dto(2L);
+
+    when(employeeRepository.findAll(sort)).thenReturn(List.of(employee));
+    when(employeeMapper.toGetDtoList(List.of(employee))).thenReturn(List.of(dto));
+
+    List<GetEmployeeDTO> result = employeeService.findAll("  ", null, sort, employeeId);
+
+    assertThat(result).containsExactly(dto);
+  }
+
+  @Test
+  void findAllPageable_shouldIgnoreBlankSearch() {
+    Long employeeId = 1L;
+    Pageable pageable = PageRequest.of(0, 20);
+
+    Employee employee = new Employee();
+    employee.setId(2L);
+    GetEmployeeDTO dto = dto(2L);
+
+    when(employeeRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(employee)));
+    when(employeeMapper.toGetDto(employee)).thenReturn(dto);
+
+    Page<GetEmployeeDTO> result = employeeService.findAll("  ", null, pageable, employeeId);
+
+    assertThat(result.getContent()).containsExactly(dto);
+  }
+
+  @Test
+  void listInPage_shouldSearchByFirstName() {
+    Long employeeId = 1L;
+    String firstName = "Ahmed";
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Employee employee = new Employee();
+    employee.setId(2L);
+    GetEmployeeDTO dto = dto(2L);
+
+    when(employeeRepository.findByFirstNameContainingIgnoreCase(firstName, pageable))
+        .thenReturn(new PageImpl<>(List.of(employee)));
+    when(employeeMapper.toGetDto(employee)).thenReturn(dto);
+
+    Page<GetEmployeeDTO> result = employeeService.listInPage(0, 10, employeeId, firstName);
+
+    assertThat(result.getContent()).containsExactly(dto);
+    verify(authorizationService).employeeRights(employeeId);
+  }
+
+  @Test
+  void listInPage_shouldReturnAllWhenFirstNameIsNull() {
+    Long employeeId = 1L;
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Employee employee = new Employee();
+    employee.setId(2L);
+    GetEmployeeDTO dto = dto(2L);
+
+    when(employeeRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(employee)));
+    when(employeeMapper.toGetDto(employee)).thenReturn(dto);
+
+    Page<GetEmployeeDTO> result = employeeService.listInPage(0, 10, employeeId, null);
+
+    assertThat(result.getContent()).containsExactly(dto);
+  }
+
+  @Test
+  void listInPage_shouldIgnoreBlankFirstName() {
+    Long employeeId = 1L;
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Employee employee = new Employee();
+    employee.setId(2L);
+    GetEmployeeDTO dto = dto(2L);
+
+    when(employeeRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(employee)));
+    when(employeeMapper.toGetDto(employee)).thenReturn(dto);
+
+    Page<GetEmployeeDTO> result = employeeService.listInPage(0, 10, employeeId, "   ");
+
+    assertThat(result.getContent()).containsExactly(dto);
+  }
+
+  private GetEmployeeDTO dto(Long id) {
+    return new GetEmployeeDTO(id, "MAT001", "Ahmed", "Alami", "ahmed@atlas.ma",
+        "Developpeur", Role.EMPLOYE, LocalDate.of(2025, 1, 1), 3L, "IT", null, null, "1 an");
   }
 }

@@ -264,4 +264,20 @@ public class ContractServiceTest {
     verify(authorizationService).contractRights(employeeId);
     verify(contractRepository).deleteById(id);
   }
+
+  @Test
+  void create_shouldSkipEmployeeLookupWhenEmployeeIdIsNull() {
+    Long requesterId = 1L;
+    CreateContractDTO dto = new CreateContractDTO(ContractType.CDI, LocalDate.of(2025, 1, 1), null,
+        new BigDecimal("5000.00"), null);
+
+    Contract contract = new Contract();
+    when(contractMapper.toEntity(dto)).thenReturn(contract);
+    when(contractRepository.save(contract)).thenReturn(contract);
+
+    Contract result = contractService.create(dto, requesterId);
+
+    assertThat(result.getEmployee()).isNull();
+    verify(employeeRepository, never()).findById(any());
+  }
 }

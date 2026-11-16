@@ -420,6 +420,152 @@ public class LeaveRequestServiceTest {
         .isInstanceOf(IllegalArgumentException.class);
   }
 
+  @Test
+  void create_shouldExcludeWeekendDays() {
+    Long employeeId = 1L;
+    Long leaveTypeId = 2L;
+    CreateLeaveRequest dto = new CreateLeaveRequest(LocalDate.of(2025, 1, 10),
+        LocalDate.of(2025, 1, 13), "Week-end", leaveTypeId);
+
+    LeaveRequest mapped = new LeaveRequest();
+    mapped.setStartDate(LocalDate.of(2025, 1, 10));
+    mapped.setEndDate(LocalDate.of(2025, 1, 13));
+
+    LeaveType leaveType = new LeaveType();
+    leaveType.setId(leaveTypeId);
+    leaveType.setDaysPerYear(20);
+
+    Employee employee = new Employee();
+    employee.setId(employeeId);
+
+    when(leaveRequestMapper.toEntity(dto)).thenReturn(mapped);
+    when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.of(leaveType));
+    when(leaveRequestRepository.findByEmployee_IdAndStatusAndStartDateBetween(
+        eq(employeeId), eq(LeaveRequestStatus.APPROUVEE), any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(List.of());
+    when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+    when(leaveRequestRepository.save(mapped)).thenReturn(mapped);
+
+    LeaveRequest result = leaveRequestService.create(dto, employeeId);
+
+    assertThat(result.getJourTravail()).isEqualTo(2);
+  }
+
+  @Test
+  void create_shouldThrowWhenEmployeeNotFound() {
+    Long employeeId = 1L;
+    Long leaveTypeId = 2L;
+    CreateLeaveRequest dto = new CreateLeaveRequest(LocalDate.of(2025, 1, 6),
+        LocalDate.of(2025, 1, 8), "Vacances", leaveTypeId);
+
+    LeaveRequest mapped = new LeaveRequest();
+    mapped.setStartDate(LocalDate.of(2025, 1, 6));
+    mapped.setEndDate(LocalDate.of(2025, 1, 8));
+
+    LeaveType leaveType = new LeaveType();
+    leaveType.setId(leaveTypeId);
+    leaveType.setDaysPerYear(20);
+
+    when(leaveRequestMapper.toEntity(dto)).thenReturn(mapped);
+    when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.of(leaveType));
+    when(leaveRequestRepository.findByEmployee_IdAndStatusAndStartDateBetween(
+        eq(employeeId), eq(LeaveRequestStatus.APPROUVEE), any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(List.of());
+    when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> leaveRequestService.create(dto, employeeId))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining("Employee not found");
+
+    verify(leaveRequestRepository, never()).save(any());
+  }
+
+  @Test
+  void create_shouldIgnoreApprovedRequestsWithoutMatchingLeaveType() {
+    Long employeeId = 1L;
+    Long leaveTypeId = 2L;
+    CreateLeaveRequest dto = new CreateLeaveRequest(LocalDate.of(2025, 1, 6),
+        LocalDate.of(2025, 1, 8), "Vacances", leaveTypeId);
+
+    LeaveRequest mapped = new LeaveRequest();
+    mapped.setStartDate(LocalDate.of(2025, 1, 6));
+    mapped.setEndDate(LocalDate.of(2025, 1, 8));
+
+    LeaveType leaveType = new LeaveType();
+    leaveType.setId(leaveTypeId);
+    leaveType.setDaysPerYear(20);
+
+    LeaveType otherType = new LeaveType();
+    otherType.setId(99L);
+
+    LeaveRequest withoutType = new LeaveRequest();
+    withoutType.setJourTravail(10);
+
+    LeaveRequest otherRequest = new LeaveRequest();
+    otherRequest.setJourTravail(10);
+    otherRequest.setLeaveType(otherType);
+
+    LeaveRequest matchingRequest = new LeaveRequest();
+    matchingRequest.setJourTravail(2);
+    matchingRequest.setLeaveType(leaveType);
+
+    Employee employee = new Employee();
+    employee.setId(employeeId);
+
+    when(leaveRequestMapper.toEntity(dto)).thenReturn(mapped);
+    when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.of(leaveType));
+    when(leaveRequestRepository.findByEmployee_IdAndStatusAndStartDateBetween(
+        eq(employeeId), eq(LeaveRequestStatus.APPROUVEE), any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(List.of(withoutType, otherRequest, matchingRequest));
+    when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+    when(leaveRequestRepository.save(mapped)).thenReturn(mapped);
+
+    LeaveRequest result = leaveRequestService.create(dto, employeeId);
+
+    assertThat(result).isEqualTo(mapped);
+  }
+
+  @Test
+  void getBalances_shouldIgnoreApprovedRequestsWithoutLeaveType() {
+    Long employeeId = 1L;
+
+    LeaveType annual = new LeaveType();
+    annual.setId(1L);
+    annual.setName("Congé annuel");
+    annual.setDaysPerYear(20);
+
+    LeaveRequest withoutType = new LeaveRequest();
+    withoutType.setJourTravail(5);
+
+    LeaveRequest approved = new LeaveRequest();
+    approved.setJourTravail(5);
+    approved.setLeaveType(annual);
+
+    when(leaveRequestRepository.findByEmployee_IdAndStatusAndStartDateBetween(
+        eq(employeeId), eq(LeaveRequestStatus.APPROUVEE), any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(List.of(withoutType, approved));
+    when(leaveTypeRepository.findAll()).thenReturn(List.of(annual));
+
+    List<LeaveBalanceDTO> result = leaveRequestService.getBalances(employeeId);
+
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).daysUsed()).isEqualTo(5);
+    assertThat(result.get(0).daysRemaining()).isEqualTo(15);
+  }
+
+  @Test
+  void cancelRequest_shouldThrowWhenNotFound() {
+    CancelLeaveRequestDTO dto = new CancelLeaveRequestDTO(5L, LeaveRequestStatus.ANNULEE);
+
+    when(leaveRequestRepository.findById(5L)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> leaveRequestService.cancelRequest(dto, 1L))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("Leave request not found");
+
+    verify(leaveRequestRepository, never()).save(any());
+  }
+
   private LeaveRequest leaveRequest(Long id, LeaveRequestStatus status, Long employeeId) {
     Employee employee = new Employee();
     employee.setId(employeeId);
